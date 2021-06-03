@@ -1,0 +1,100 @@
+Warning: Function C:\ratter\ExperPort\FakeRP\isvector.m has the same name as a 
+MATLAB builtin. We suggest you rename the function to avoid a potential name 
+conflict.  
+Compiler version: 4.9 (R2008b)  
+mcc -o 'TechNotes' -W 'main' -d 'C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src' -T 'link:exe' -v 'C:\ratter\ExperPort\Utility\TechNotes2\TechNotes.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_viewold.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TechNotes.fig' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_clear.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_emergency.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_general.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_listexperimenters.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_listrats.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_listrigs.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_listsessions.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_listtowers.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_submit.m' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci64' -a 'C:\ratter\ExperPort\MySQLUtility\zlibwapi.dll' -a 'C:\ratter\ExperPort\MySQLUtility\bdata.p' -a 'C:\ratter\ExperPort\MySQLUtility\LIBMYSQL.dll' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexw32' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexa64' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci' -a 'C:\ratter\ExperPort\MySQLUtility\win64\mym.mexw64' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_removetraining.m' -a 'C:\ratter\ExperPort\Utility\ratinfo\put_rat_on_recovery.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_cagemate.m' -a 'C:\ratter\ExperPort\Utility\AutomatedEmails\set_email_sender.p' -a 'C:\Program Files\Matlab\R2008b\toolbox\matlab\iofun\sendmail.m' -a 'C:\Program Files\Matlab\R2008b\toolbox\matlab\uitools\setpref.m' -a 'C:\ratter\ExperPort\Utility\TechNotes2\TN_determine_experimenters.m' -a 'C:\ratter\ExperPort\Utility\AutomatedEmails\send_text_message.m'  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\mcc.enc 
+Processing C:\ratter\ExperPort\Utility\TechNotes2\TechNotes.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\guide\guideopts.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\winfun\actxcontrolselect.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\winfun\actxcontrolcreateproperty.fig 
+Processing include files... 
+2 item(s) added. 
+Processing directories installed with MCR... 
+The file C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src\mccExcludedFiles.log contains a list of functions excluded from the CTF archive. 
+2 item(s) added. 
+Generating MATLAB path for the compiled application... 
+Created 49 path items. 
+Begin validation of MEX files: Thu Jul 25 17:11:10 2019  
+Validating 'C:\ratter\ExperPort\MySQLUtility\mym.mexw32'.  
+Found M-file 'C:\ratter\ExperPort\MySQLUtility\mym.m'.  
+MEX file  
+    'C:\ratter\ExperPort\MySQLUtility\mym.mexw32'  
+ is valid. It contains 'mexFunction.'  
+End validation of MEX files: Thu Jul 25 17:22:52 2019  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Deleting 7 temporary MEX authorization files.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1976_6594_1976.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1976_25970_1976.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1976_6505_1976.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1976_5917_1976.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1976_29992_1976.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1976_10690_1976.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1976_25398_1976.auth'.  
+Parsing file "C:\ratter\ExperPort\Utility\TechNotes2\TechNotes.m" 
+	(Referenced from: "Compiler Command Line").  
+Parsing file "C:\Program Files\Matlab\R2008b\toolbox\compiler\deploy\deployprint.m" 
+	(Referenced from: "Compiler Command Line").  
+Parsing file "C:\Program Files\Matlab\R2008b\toolbox\compiler\deploy\printdlg.m" 
+	(Referenced from: "Compiler Command Line").  
+Generating file "C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src\TechNotes_main.c".  
+Generating file "C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src\TechNotes_delay_load.c".  
+Generating file "C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src\readme.txt".  
+Generating file "C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src\TechNotes_mcc_component_data.c".  
+Executing command: mbuild  -O -v -output "TechNotes" -I"C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src" "C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src\TechNotes_main.c" "C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src\TechNotes_delay_load.c" "C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src\TechNotes_mcc_component_data.c" -link exe  -env MCR_DELAYLOAD=/delayload:mclmcrrt79.dll -env MCR_DELAYLIB=delayimp.lib -outdir "C:\ratter\ExperPort\Utility\TechNotes2\TechNotes\src"  
+ This is mbuild Copyright 1984-2006 The MathWorks, Inc. 
+ 
+-> Default options filename found in C:\Users\brodylab\AppData\Roaming\MathWorks\MATLAB\R2008b 
+---------------------------------------------------------------- 
+->    Options file           = C:\Users\brodylab\AppData\Roaming\MathWorks\MATLAB\R2008b\compopts.bat 
+->    COMPILER               = lcc 
+->    Compiler flags: 
+         COMPFLAGS           = -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup 
+         OPTIMFLAGS          = -DNDEBUG 
+         DEBUGFLAGS          = -g4 
+         arguments           =  -IC:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC 
+         Name switch         = -Fo 
+->    Pre-linking commands   =  
+->    LINKER                 = lcclnk 
+->    Link directives: 
+         LINKFLAGS           = -tmpdir "C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\." -L"C:\PROGRA~1\Matlab\R2008b\sys\lcc\lib" -libpath "C:\PROGRA~1\Matlab\R2008b\extern\lib\win32\lcc" 
+         LINKFLAGSPOST       = mclmcrrt.lib 
+         Name directive      = -o "C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\TechNotes.exe" 
+         File link directive =  
+         Lib. link directive =  
+         Rsp file indicator  = @ 
+->    Resource Compiler      =  
+->    Resource Linker        =  
+---------------------------------------------------------------- 
+ 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\TechNotes_main.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\TechNotes_main.c 
+ 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\TechNotes_delay_load.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\TechNotes_delay_load.c 
+ 
+Warning C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\TechNotes_delay_load.c: 21  static `void function(void) FailedToLoadMCR' is not referenced 
+0 errors, 1 warnings 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\TechNotes_mcc_component_data.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\TechNotes_mcc_component_data.c 
+ 
+    Contents of C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\mbuild_tmp.rsp: 
+  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\TechNotes_main.obj  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\TechNotes_delay_load.obj  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\TechNotes_mcc_component_data.obj 
+ 
+ 
+--> lcclnk -o "C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\TechNotes.exe" -tmpdir "C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\." -L"C:\PROGRA~1\Matlab\R2008b\sys\lcc\lib" -libpath "C:\PROGRA~1\Matlab\R2008b\extern\lib\win32\lcc"  @C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\MBUILD~1.RSP  mclmcrrt.lib 
+ 
+Manually moving TechNotes.exe to C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\TechNotes.exe 
+Manually moving TechNotes.lib to C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\TechNotes.lib 
+Manually moving TechNotes.exp to C:\RATTER\EXPERP~1\UTILITY\TECHNO~1\TECHNO~1\SRC\TechNotes.exp 
+ 
+--> "if exist C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib.def del C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib.def" 
+ 
+ 
+--> "if exist C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib_stub.obj del C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib_stub.obj" 
+ 

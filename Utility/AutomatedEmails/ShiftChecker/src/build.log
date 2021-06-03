@@ -1,0 +1,244 @@
+Warning: Function C:\ratter\ExperPort\FakeRP\isvector.m has the same name as a 
+MATLAB builtin. We suggest you rename the function to avoid a potential name 
+conflict.  
+Compiler version: 4.9 (R2008b)  
+mcc -o 'ShiftChecker' -W 'main' -d 'C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src' -T 'link:exe' -v 'C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker2.m' -a 'C:\ratter\ExperPort\Utility\AutomatedEmails\checkshift.m' -a 'C:\ratter\ExperPort\Utility\check_calibration.m' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexw32' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexa64' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexa64.phenom' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexa64cuda' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexglx' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci64' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci.tiger' -a 'C:\ratter\ExperPort\MySQLUtility\zlibwapi.dll' -a 'C:\ratter\ExperPort\MySQLUtility\bdata.p' -a 'C:\ratter\ExperPort\MySQLUtility\LIBMYSQL.dll' -a 'C:\ratter\ExperPort\MySQLUtility\win64\zlibwapi.dll' -a 'C:\ratter\ExperPort\MySQLUtility\win64\libmysql.dll' -a 'C:\ratter\ExperPort\MySQLUtility\win64\mym.mexw64' -a 'C:\ratter\ExperPort\Modules\Settings.m' -a 'C:\ratter\ExperPort\Settings\Settings_Custom.conf' -a 'C:\ratter\Protocols\@WaterCalibration\custom_preferences.mat' -a 'C:\ratter\ExperPort\Utility\AutomatedEmails\SC_running.m' -a 'C:\ratter\ExperPort\Modules\bSettings.m' -a 'C:\ratter\ExperPort\Utility\AutomatedEmails\shiftchecker_status.mat' -a 'C:\ratter\ExperPort\Settings\Settings_Default.conf' -a 'C:\ratter\ExperPort\Settings\Settings_Template.conf' -a 'C:\ratter\ExperPort\Utility\AutomatedEmails\SC_determine_color.m' -a 'C:\ratter\ExperPort\Utility\AutomatedEmails\SC_update_tech.m' -a 'C:\ratter\ExperPort\Utility\AutomatedEmails\SC_check_next_tech.m'  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\mcc.enc 
+Processing C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker2.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\guide\guideopts.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\winfun\actxcontrolselect.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\winfun\actxcontrolcreateproperty.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\stats\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\instrument\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\control\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\daq\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\shared\controllib\mcc.enc 
+Processing C:\ratter\ExperPort\Utility\TechNotes2\TechNotes.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\signal\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\ident\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\finance\mcc.enc 
+Processing include files... 
+2 item(s) added. 
+Processing directories installed with MCR... 
+The file C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src\mccExcludedFiles.log contains a list of functions excluded from the CTF archive. 
+12 item(s) added. 
+Generating MATLAB path for the compiled application... 
+Created 78 path items. 
+Begin validation of MEX files: Thu Aug 22 12:00:44 2019  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\bdschur.mexw32'.  
+Found M-file 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\bdschur.m'.  
+MEX file  
+    'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\bdschur.mexw32'  
+ is valid. It contains 'mexFunction.'  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\ddaeresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\ddaesim.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\frdelay.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\frkernel.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\hlyapslv.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\lyapslv.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\matscale.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\mimozero.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\normrank.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\quadgp1.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\quadgp2.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\ssfresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\ssresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\sssim.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\sylvslv.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\tfresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\tfsim.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\triperm.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\zpkboderesp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\zpkfresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\zpkresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\zpksim.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\daq\daq\daqmex.mexw32'.  
+Found M-file 'C:\Program Files\Matlab\R2008b\toolbox\daq\daq\daqmex.m'.  
+MEX file  
+    'C:\Program Files\Matlab\R2008b\toolbox\daq\daq\daqmex.mexw32'  
+ is valid. It contains 'mexFunction.'  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\ident\nlident\@linear\soevaluate.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\ident\nlident\@wavenet\soevaluate.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\instrument\instrument\private\privateCOMGetErrorInfo.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\instrument\instrument\private\privateGetGpib32DllVendor.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\instrument\instrument\private\privateLoadIviClass.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\signal\signal\private\upfirdnmex.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\ratter\ExperPort\MySQLUtility\mym.mexw32'.  
+Found M-file 'C:\ratter\ExperPort\MySQLUtility\mym.m'.  
+MEX file  
+    'C:\ratter\ExperPort\MySQLUtility\mym.mexw32'  
+ is valid. It contains 'mexFunction.'  
+End validation of MEX files: Thu Aug 22 12:00:48 2019  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Deleting 72 temporary MEX authorization files.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_6621_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_32507_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_10397_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_23025_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_20407_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_21459_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_20262_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_24164_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_9335_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_20622_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_1097_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_26696_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_2347_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_8336_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_2598_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_9289_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_24226_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_11520_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_17048_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_21734_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_25899_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_23933_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_15640_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_14536_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_22944_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_20748_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_23518_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_11091_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_25507_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_29914_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_9045_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_21578_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_13180_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_14632_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_4624_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_3715_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_6964_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_5818_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_10334_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_14079_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_4067_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_18572_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_8065_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_30472_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_32176_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_6829_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_26312_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_14195_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_3057_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_19111_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_27367_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_561_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_27809_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_4888_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_19025_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_20732_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_29538_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_17497_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_30378_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_20459_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_7618_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_14148_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_9111_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_11844_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_28862_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_19842_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_10126_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_29073_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_20357_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_29795_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_12683_3944.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_32502_3944.auth'.  
+Parsing file "C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker2.m" 
+	(Referenced from: "Compiler Command Line").  
+Parsing file "C:\Program Files\Matlab\R2008b\toolbox\compiler\deploy\deployprint.m" 
+	(Referenced from: "Compiler Command Line").  
+Parsing file "C:\Program Files\Matlab\R2008b\toolbox\compiler\deploy\printdlg.m" 
+	(Referenced from: "Compiler Command Line").  
+Generating file "C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src\ShiftChecker_main.c".  
+Generating file "C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src\ShiftChecker_delay_load.c".  
+Generating file "C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src\readme.txt".  
+Generating file "C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src\ShiftChecker_mcc_component_data.c".  
+Contents of temporary response file 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_20595':  
+ ......................  
+' -O -v -output "ShiftChecker" -I"C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src" "C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src\ShiftChecker_main.c" "C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src\ShiftChecker_delay_load.c" "C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src\ShiftChecker_mcc_component_data.c" -link exe  -env MCR_DELAYLOAD=/delayload:mclmcrrt79.dll -env MCR_DELAYLIB=delayimp.lib -outdir "C:\ratter\ExperPort\Utility\AutomatedEmails\ShiftChecker\src"'  
+......................  
+Executing command: mbuild  "@C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_3944_20595"  
+ This is mbuild Copyright 1984-2006 The MathWorks, Inc. 
+ 
+-> Default options filename found in C:\Users\brodylab\AppData\Roaming\MathWorks\MATLAB\R2008b 
+---------------------------------------------------------------- 
+->    Options file           = C:\Users\brodylab\AppData\Roaming\MathWorks\MATLAB\R2008b\compopts.bat 
+->    COMPILER               = lcc 
+->    Compiler flags: 
+         COMPFLAGS           = -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup 
+         OPTIMFLAGS          = -DNDEBUG 
+         DEBUGFLAGS          = -g4 
+         arguments           =  -IC:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC 
+         Name switch         = -Fo 
+->    Pre-linking commands   =  
+->    LINKER                 = lcclnk 
+->    Link directives: 
+         LINKFLAGS           = -tmpdir "C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\." -L"C:\PROGRA~1\Matlab\R2008b\sys\lcc\lib" -libpath "C:\PROGRA~1\Matlab\R2008b\extern\lib\win32\lcc" 
+         LINKFLAGSPOST       = mclmcrrt.lib 
+         Name directive      = -o "C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\ShiftChecker.exe" 
+         File link directive =  
+         Lib. link directive =  
+         Rsp file indicator  = @ 
+->    Resource Compiler      =  
+->    Resource Linker        =  
+---------------------------------------------------------------- 
+ 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\ShiftChecker_main.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\ShiftChecker_main.c 
+ 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\ShiftChecker_delay_load.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\ShiftChecker_delay_load.c 
+ 
+Warning C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\ShiftChecker_delay_load.c: 21  static `void function(void) FailedToLoadMCR' is not referenced 
+0 errors, 1 warnings 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\ShiftChecker_mcc_component_data.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\ShiftChecker_mcc_component_data.c 
+ 
+    Contents of C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\mbuild_tmp.rsp: 
+  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\ShiftChecker_main.obj  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\ShiftChecker_delay_load.obj  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\ShiftChecker_mcc_component_data.obj 
+ 
+ 
+--> lcclnk -o "C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\ShiftChecker.exe" -tmpdir "C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\." -L"C:\PROGRA~1\Matlab\R2008b\sys\lcc\lib" -libpath "C:\PROGRA~1\Matlab\R2008b\extern\lib\win32\lcc"  @C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\MBUILD~1.RSP  mclmcrrt.lib 
+ 
+Manually moving ShiftChecker.exe to C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\ShiftChecker.exe 
+Manually moving ShiftChecker.lib to C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\ShiftChecker.lib 
+Manually moving ShiftChecker.exp to C:\RATTER\EXPERP~1\UTILITY\AUTOMA~1\SHIFTC~1\SRC\ShiftChecker.exp 
+ 
+--> "if exist C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib.def del C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib.def" 
+ 
+ 
+--> "if exist C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib_stub.obj del C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib_stub.obj" 
+ 

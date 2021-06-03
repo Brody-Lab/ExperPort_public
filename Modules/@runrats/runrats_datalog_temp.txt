@@ -1,0 +1,314 @@
+New File Generated 2019-01-16 16:12:23190116 16:29:37 startup   Not Active
+190116 16:29:37 update_session   7) 16:00-18:30: 
+190116 16:30:55 startup   Not Active
+190116 16:30:55 update_session   7)  4:00- 6:30: 
+190124 12:09:03 startup   Not Active
+190124 12:11:12 startup   Not Active
+190124 12:18:08 startup   Not Active
+190124 12:39:00 startup   Not Active
+190124 12:39:58 startup   Not Active
+190124 14:06:26 startup   Not Active
+190124 14:08:54 startup   Not Active
+190124 14:11:34 startup   Not Active
+190319 16:49:39 startup   Not Active
+190319 16:49:39 update_session   7)  4:00- 6:30: 
+190319 17:06:34 startup   Not Active
+190319 17:06:34 update_session   7)  4:00- 6:30: 
+190319 17:10:05 startup   Not Active
+190319 17:10:05 update_session   7)  4:00- 6:30: 
+190822 11:19:42 startup   Not Active
+190822 11:19:42 update_session   5) 10:40- 1:10: 
+190822 11:21:05 startup   Not Active
+190822 11:21:05 update_session   5) 10:40- 1:10: 
+191209 12:47:37 startup   Not Active
+191209 12:47:37 update_session   5) 10:40- 1:10: 
+191209 12:59:11 startup   Not Active
+191209 12:59:17 update_session   6)  1:20- 3:50: 
+191209 13:29:35 startup   Not Active
+191209 13:29:35 update_session   6)  1:20- 3:50: 
+191209 13:31:01 startup   Not Active
+191209 13:31:01 update_session   6)  1:20- 3:50: 
+191209 13:32:42 startup   Not Active
+191209 13:32:42 update_session   6)  1:20- 3:50: 
+191209 13:56:43 startup   Not Active
+191209 13:56:43 update_session   6)  1:20- 3:50: 
+191209 13:58:07 testimplant   6)  1:20- 3:50: 
+191209 13:58:22 manualtest Chuck K283 6)  1:20- 3:50: 
+191209 14:21:48 startup   Not Active
+191209 14:21:48 update_session   6)  1:20- 3:50: 
+191209 14:22:56 manualtest Chuck K283 6)  1:20- 3:50: 
+191209 14:42:25 startup   Not Active
+191209 14:42:25 update_session   6)  1:20- 3:50: 
+191209 14:42:44 manualtest Chuck K283 6)  1:20- 3:50: 
+191209 14:44:43 testimplant Chuck K283 6)  1:20- 3:50: 
+191209 14:45:05 testimplant Chuck K283 6)  1:20- 3:50: 
+191209 14:45:27 testimplant Chuck K283 6)  1:20- 3:50: 
+191209 14:45:53 startup   Not Active
+191209 14:45:53 update_session   6)  1:20- 3:50: 
+191209 14:46:01 testimplant   6)  1:20- 3:50: 
+191209 14:46:12 manualtest Chuck K283 6)  1:20- 3:50: 
+191209 14:47:48 testimplant Chuck K283 6)  1:20- 3:50: 
+191209 14:48:08 testimplant Chuck K283 6)  1:20- 3:50: 
+191209 14:48:58 startup   Not Active
+191209 14:48:59 update_session   6)  1:20- 3:50: 
+191209 14:49:09 manualtest Chuck K283 6)  1:20- 3:50: 
+191209 14:50:48 testimplant Chuck K283 6)  1:20- 3:50: 
+191210 11:46:34 startup   Not Active
+191210 11:46:34 update_session   5) 10:40- 1:10: 
+191210 11:46:46 manualtest Chuck K283 5) 10:40- 1:10: 
+191210 11:49:47 testimplant Chuck K283 5) 10:40- 1:10: 
+191210 11:51:13 testimplant Chuck K283 5) 10:40- 1:10: 
+191210 11:52:49 testimplant Chuck K283 5) 10:40- 1:10: 
+191210 11:52:57 testimplant Chuck K283 5) 10:40- 1:10: 
+191210 11:54:28 testimplant Chuck K283 5) 10:40- 1:10: 
+210305 15:16:15 startup   Not Active
+210305 15:16:15 update_session   7)  4:00- 6:30: 
+210305 15:32:48 startup   Not Active
+210305 15:32:48 update_session   7)  4:00- 6:30: 
+210305 15:39:42 startup   Not Active
+210305 15:39:42 update_session   7)  4:00- 6:30: 
+210305 15:46:54 startup   Not Active
+210305 15:46:54 update_session   7)  4:00- 6:30: 
+210305 15:54:36 runstart Chuck K362 7)  4:00- 6:30: 
+210305 15:55:37 startup   Not Active
+210305 15:55:38 update_session   7)  4:00- 6:30: 
+210305 16:03:18 startup   Not Active
+210305 16:03:18 update_session   7)  4:00- 6:30: 
+210305 16:08:46 runstart Chuck K362 7)  4:00- 6:30: 
+210305 16:13:04 startup   Not Active
+210305 16:13:04 update_session   7)  4:00- 6:30: 
+210305 16:13:23 runstart Chuck K362 7)  4:00- 6:30: 
+210305 16:14:09 crashed Chuck K362 7)  4:00- 6:30: 
+210305 16:24:22 startup   Not Active
+210305 16:24:22 update_session   7)  4:00- 6:30: 
+210305 16:24:53 runstart Chuck K362 7)  4:00- 6:30: 
+210305 16:31:00 crashed Chuck K362 7)  4:00- 6:30: 
+210305 16:32:35 runend Chuck K362 7)  4:00- 6:30: 
+210305 17:00:55 startup   Not Active
+210305 17:00:56 update_session   7)  4:00- 6:30: 
+210305 17:01:27 runstart Chuck K362 7)  4:00- 6:30: 
+210305 17:04:00 crashed Chuck K362 7)  4:00- 6:30: 
+210305 17:04:24 runend Chuck K362 7)  4:00- 6:30: 
+210305 17:05:50 startup   Not Active
+210305 17:05:50 update_session   7)  4:00- 6:30: 
+210305 17:06:10 runstart Chuck K362 7)  4:00- 6:30: 
+210305 17:06:43 crashed Chuck K362 7)  4:00- 6:30: 
+210305 17:06:55 runend Chuck K362 7)  4:00- 6:30: 
+210305 17:09:39 startup   Not Active
+210305 17:09:39 update_session   7)  4:00- 6:30: 
+210305 17:10:09 runstart Chuck K362 7)  4:00- 6:30: 
+210305 17:10:57 crashed Chuck K362 7)  4:00- 6:30: 
+210305 17:11:09 runend Chuck K362 7)  4:00- 6:30: 
+210305 17:39:11 startup   Not Active
+210305 17:39:11 update_session   8)  6:40- 9:10: 
+210305 17:39:31 runstart Chuck K362 8)  6:40- 9:10: 
+210305 17:40:07 crashed Chuck K362 8)  6:40- 9:10: 
+210305 17:40:19 runend Chuck K362 8)  6:40- 9:10: 
+210305 18:01:57 startup   Not Active
+210305 18:01:57 update_session   8)  6:40- 9:10: 
+210305 18:02:12 nosettings  I 8)  6:40- 9:10: 
+210305 18:04:42 startup   Not Active
+210305 18:04:42 update_session   8)  6:40- 9:10: 
+210305 18:11:10 startup   Not Active
+210305 18:11:10 update_session   8)  6:40- 9:10: 
+210305 18:12:29 runstart Josh I001 8)  6:40- 9:10: 
+210305 18:13:32 crashed Josh I001 8)  6:40- 9:10: 
+210305 18:28:10 startup   Not Active
+210305 18:28:11 update_session   8)  6:40- 9:10: 
+210305 18:28:53 runstart Josh I001 8)  6:40- 9:10: 
+210305 18:30:12 crashed Josh I001 8)  6:40- 9:10: 
+210305 19:04:29 startup   Not Active
+210305 19:04:30 update_session   8)  6:40- 9:10: 
+210305 19:05:13 runstart Josh I001 8)  6:40- 9:10: 
+210305 19:06:47 crashed Josh I001 8)  6:40- 9:10: 
+210305 19:56:11 startup   Not Active
+210305 19:56:11 update_session   8)  6:40- 9:10: 
+210305 19:56:46 runstart Josh I001 8)  6:40- 9:10: 
+210305 19:57:48 crashed Josh I001 8)  6:40- 9:10: 
+210305 19:59:14 startup   Not Active
+210305 19:59:14 update_session   8)  6:40- 9:10: 
+210305 19:59:48 runstart Josh I001 8)  6:40- 9:10: 
+210305 20:00:02 runend Josh I001 8)  6:40- 9:10: 
+210305 20:01:02 startup   Not Active
+210305 20:01:02 update_session   8)  6:40- 9:10: 
+210305 20:01:38 runstart Josh I001 8)  6:40- 9:10: 
+210305 20:02:36 crashed Josh I001 8)  6:40- 9:10: 
+210305 21:13:02 startup   Not Active
+210305 21:13:02 update_session   9)  9:20-11:50: 
+210305 21:13:46 runstart Josh I001 9)  9:20-11:50: 
+210305 21:13:54 runend Josh I001 9)  9:20-11:50: 
+210305 21:14:16 reboot Josh I001 9)  9:20-11:50: 
+210305 21:17:05 startup   Not Active
+210305 21:17:05 update_session   9)  9:20-11:50: 
+210305 21:17:37 runstart Josh I001 9)  9:20-11:50: 
+210305 21:17:53 runend Josh I001 9)  9:20-11:50: 
+210305 21:19:45 reboot Josh I001 9)  9:20-11:50: 
+210305 21:23:46 startup   Not Active
+210305 21:23:47 update_session   9)  9:20-11:50: 
+210305 21:24:20 runstart Josh I001 9)  9:20-11:50: 
+210305 21:25:23 crashed Josh I001 9)  9:20-11:50: 
+210305 21:26:48 startup   Not Active
+210305 21:26:48 update_session   9)  9:20-11:50: 
+210305 21:27:23 runstart Josh I001 9)  9:20-11:50: 
+210305 21:27:34 runend Josh I001 9)  9:20-11:50: 
+210305 21:27:56 reboot Josh I001 9)  9:20-11:50: 
+210305 21:40:20 startup   Not Active
+210305 21:40:21 update_session   9)  9:20-11:50: 
+210305 21:46:57 manualtest Josh I001 9)  9:20-11:50: 
+210305 21:47:57 runstart Josh I001 9)  9:20-11:50: 
+210305 21:48:36 crashed Josh I001 9)  9:20-11:50: 
+210305 21:53:35 startup   Not Active
+210305 21:53:36 update_session   9)  9:20-11:50: 
+210305 21:54:10 runstart Josh I001 9)  9:20-11:50: 
+210305 21:55:03 crashed Josh I001 9)  9:20-11:50: 
+210305 21:56:27 startup   Not Active
+210305 21:56:28 update_session   9)  9:20-11:50: 
+210305 21:57:02 runstart Josh I001 9)  9:20-11:50: 
+210305 21:57:43 crashed Josh I001 9)  9:20-11:50: 
+210305 21:59:07 startup   Not Active
+210305 21:59:07 update_session   9)  9:20-11:50: 
+210305 21:59:42 runstart Josh I001 9)  9:20-11:50: 
+210305 21:59:56 runend Josh I001 9)  9:20-11:50: 
+210305 22:00:18 reboot Josh I001 9)  9:20-11:50: 
+210305 22:27:22 startup   Not Active
+210305 22:27:23 update_session   9)  9:20-11:50: 
+210305 22:46:32 manualtest Josh I001 9)  9:20-11:50: 
+210305 22:47:30 runstart Josh I001 9)  9:20-11:50: 
+210305 22:48:17 crashed Josh I001 9)  9:20-11:50: 
+210305 22:49:38 startup   Not Active
+210305 22:50:13 runstart Josh I001 
+210305 22:50:27 runend Josh I001 
+210305 22:51:22 startup   Not Active
+210305 22:51:58 runstart Josh I001 
+210305 22:52:36 runend Josh I001 
+210305 22:58:07 startup   Not Active
+210305 22:58:25 manualtest Josh I001 
+210305 22:59:40 runstart Josh I001 
+210305 22:59:54 runend Josh I001 
+210306 13:07:43 startup   Not Active
+210306 13:07:43 update_session   7)  4:00- 6:30: 
+210306 13:12:38 manualtest Josh I001 7)  4:00- 6:30: 
+210306 13:13:31 runstart Josh I001 7)  4:00- 6:30: 
+210306 13:15:44 crashed Josh I001 7)  4:00- 6:30: 
+210306 13:17:07 startup   Not Active
+210306 13:17:07 update_session   7)  4:00- 6:30: 
+210306 13:17:42 runstart Josh I001 7)  4:00- 6:30: 
+210306 13:18:38 runend Josh I001 7)  4:00- 6:30: 
+210306 13:19:36 startup   Not Active
+210306 13:19:37 update_session   7)  4:00- 6:30: 
+210306 15:47:56 manualtest Josh I001 7)  4:00- 6:30: 
+210306 15:59:12 runstart Josh I001 7)  4:00- 6:30: 
+210306 16:01:33 crashed Josh I001 7)  4:00- 6:30: 
+210306 16:14:21 startup   Not Active
+210306 16:14:21 update_session   7)  4:00- 6:30: 
+210306 16:14:37 manualtest Josh I001 7)  4:00- 6:30: 
+210306 16:15:28 runstart Josh I001 7)  4:00- 6:30: 
+210306 16:18:33 crashed Josh I001 7)  4:00- 6:30: 
+210306 18:26:30 startup   Not Active
+210306 18:26:30 update_session   8)  6:40- 9:10: 
+210306 18:26:41 manualtest Josh I001 8)  6:40- 9:10: 
+210306 18:27:59 runstart Josh I001 8)  6:40- 9:10: 
+210306 18:30:35 crashed Josh I001 8)  6:40- 9:10: 
+210306 18:56:09 startup   Not Active
+210306 18:56:09 update_session   8)  6:40- 9:10: 
+210306 18:57:47 manualtest Josh I001 8)  6:40- 9:10: 
+210306 18:59:26 runstart Josh I001 8)  6:40- 9:10: 
+210306 19:01:29 crashed Josh I001 8)  6:40- 9:10: 
+210306 19:05:56 startup   Not Active
+210306 19:05:57 update_session   8)  6:40- 9:10: 
+210306 19:08:02 startup   Not Active
+210306 19:08:02 update_session   8)  6:40- 9:10: 
+210306 19:13:12 startup   Not Active
+210306 19:13:12 update_session   8)  6:40- 9:10: 
+210306 19:13:37 manualtest Josh I001 8)  6:40- 9:10: 
+210306 19:40:46 runstart Josh I001 8)  6:40- 9:10: 
+210306 19:42:25 crashed Josh I001 8)  6:40- 9:10: 
+210307 16:33:45 startup  000 Not Active
+210307 16:33:46 update_session  000 7)  4:00- 6:30: 
+210307 16:35:49 manualtest Josh I001 7)  4:00- 6:30: 
+210307 16:37:23 runstart Josh I001 7)  4:00- 6:30: 
+210307 16:39:56 startup  000 Not Active
+210307 16:39:57 update_session  000 7)  4:00- 6:30: 
+210307 16:40:12 manualtest Josh I001 7)  4:00- 6:30: 
+210307 16:42:29 runstart Josh I001 7)  4:00- 6:30: 
+210307 16:44:18 crashed Josh I001 7)  4:00- 6:30: 
+210307 16:45:51 startup  000 Not Active
+210307 16:45:51 update_session  000 7)  4:00- 6:30: 
+210307 16:46:43 runstart Josh I001 7)  4:00- 6:30: 
+210307 16:48:03 crashed Josh I001 7)  4:00- 6:30: 
+210307 16:51:00 startup  000 Not Active
+210307 16:51:01 update_session  000 7)  4:00- 6:30: 
+210307 16:51:42 manualtest Josh I001 7)  4:00- 6:30: 
+210307 17:41:42 runstart Josh I001 7)  4:00- 6:30: 
+210307 17:42:30 crashed Josh I001 7)  4:00- 6:30: 
+210307 17:44:08 startup  000 Not Active
+210307 17:44:09 update_session  000 8)  6:40- 9:10: 
+210307 17:45:01 runstart Josh I001 8)  6:40- 9:10: 
+210307 17:45:18 runend Josh I001 8)  6:40- 9:10: 
+210307 17:46:26 startup  000 Not Active
+210307 17:46:26 update_session  000 8)  6:40- 9:10: 
+210310 17:50:05 startup   Not Active
+210310 17:50:05 update_session   8)  6:40- 9:10: 
+210310 17:54:05 manualtest Josh I001 8)  6:40- 9:10: 
+210310 17:55:11 runstart Josh I001 8)  6:40- 9:10: 
+210310 17:56:56 runend Josh I001 8)  6:40- 9:10: 
+210310 17:58:28 startup   Not Active
+210310 17:58:28 update_session   8)  6:40- 9:10: 
+210310 18:00:27 manualtest Josh I001 8)  6:40- 9:10: 
+210310 18:01:36 runstart Josh I001 8)  6:40- 9:10: 
+210310 18:02:59 crashed Josh I001 8)  6:40- 9:10: 
+210310 18:04:13 startup   Not Active
+210310 18:04:13 update_session   8)  6:40- 9:10: 
+210310 18:05:01 runstart Josh I001 8)  6:40- 9:10: 
+210310 18:06:40 crashed Josh I001 8)  6:40- 9:10: 
+210310 18:09:12 startup   Not Active
+210310 18:09:12 update_session   8)  6:40- 9:10: 
+210310 18:10:28 manualtest Josh I001 8)  6:40- 9:10: 
+210310 18:13:15 runstart Josh I001 8)  6:40- 9:10: 
+210310 18:15:03 crashed Josh I001 8)  6:40- 9:10: 
+210310 18:16:38 startup   Not Active
+210310 18:16:39 update_session   8)  6:40- 9:10: 
+210310 19:10:20 manualtest Josh I001 8)  6:40- 9:10: 
+210310 19:14:34 runstart Josh I001 8)  6:40- 9:10: 
+210310 19:16:40 crashed Josh I001 8)  6:40- 9:10: 
+210310 19:18:10 startup   Not Active
+210310 19:18:10 update_session   8)  6:40- 9:10: 
+210310 19:18:50 runstart Josh I001 8)  6:40- 9:10: 
+210310 19:19:04 runend Josh I001 8)  6:40- 9:10: 
+210310 19:20:22 startup   Not Active
+210310 19:20:22 update_session   8)  6:40- 9:10: 
+210310 21:01:20 startup   Not Active
+210310 21:01:21 update_session   9)  9:20-11:50: 
+210310 21:30:14 startup   Not Active
+210310 21:30:14 update_session   9)  9:20-11:50: 
+210310 21:30:29 manualtest Josh I001 9)  9:20-11:50: 
+210310 21:31:27 runstart Josh I001 9)  9:20-11:50: 
+210310 21:32:22 crashed Josh I001 9)  9:20-11:50: 
+210310 21:33:48 startup   Not Active
+210310 21:33:48 update_session   9)  9:20-11:50: 
+210310 21:33:52 autoload Josh I001 9)  9:20-11:50: 
+210310 21:34:24 runstart Josh I001 9)  9:20-11:50: 
+210310 21:35:21 crashed Josh I001 9)  9:20-11:50: 
+210310 21:36:13 crashcleanup Josh I001 9)  9:20-11:50: 
+210310 21:36:13 reboot Josh I001 9)  9:20-11:50: 
+210310 21:53:38 startup   Not Active
+210310 21:53:40 update_session   9)  9:20-11:50: 
+210310 21:54:03 manualtest Josh I002 9)  9:20-11:50: 
+210310 22:06:54 runstart Josh I002 9)  9:20-11:50: 
+210310 22:07:08 crashed Josh I002 9)  9:20-11:50: 
+210310 22:08:43 startup   Not Active
+210310 22:08:43 update_session   9)  9:20-11:50: 
+210310 22:08:45 autoload Josh I002 9)  9:20-11:50: 
+210310 22:09:05 runstart Josh I002 9)  9:20-11:50: 
+210310 22:10:39 crashed Josh I002 9)  9:20-11:50: 
+210310 22:11:30 crashcleanup Josh I002 9)  9:20-11:50: 
+210310 22:11:30 reboot Josh I002 9)  9:20-11:50: 
+210311 14:25:19 startup   Not Active
+210311 14:25:19 update_session   7)  4:00- 6:30: 
+210312 12:21:32 startup   Not Active
+210312 12:21:33 update_session   7)  4:00- 6:30: 
+210312 12:23:17 manualtest Josh I001 7)  4:00- 6:30: 
+210312 12:24:28 runstart Josh I001 7)  4:00- 6:30: 
+210312 12:27:02 runend Josh I001 7)  4:00- 6:30: 
+210312 12:28:19 startup   Not Active
+210312 12:28:19 update_session   7)  4:00- 6:30: 

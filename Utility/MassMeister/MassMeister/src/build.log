@@ -1,0 +1,223 @@
+Warning: Function C:\ratter\ExperPort\FakeRP\isvector.m has the same name as a 
+MATLAB builtin. We suggest you rename the function to avoid a potential name 
+conflict.  
+Compiler version: 4.9 (R2008b)  
+mcc -o 'MassMeister' -W 'main' -d 'C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src' -T 'link:exe' -v 'C:\ratter\ExperPort\Utility\MassMeister\MassMeister.m' -a 'C:\ratter\ExperPort\Utility\MassMeister\update_ratname.m' -a 'C:\ratter\ExperPort\Utility\MassMeister\get_colors.m' -a 'C:\ratter\ExperPort\Utility\MassMeister\get_newrats.m' -a 'C:\ratter\ExperPort\Utility\MassMeister\jump_to_empty.m' -a 'C:\ratter\ExperPort\Utility\MassMeister\load_settings.m' -a 'C:\ratter\ExperPort\Utility\MassMeister\MassMeister.fig' -a 'C:\ratter\ExperPort\Utility\MassMeister\MassMeister_Properties.fig' -a 'C:\ratter\ExperPort\Utility\MassMeister\MassMeister_Properties.m' -a 'C:\ratter\ExperPort\Utility\MassMeister\Properties.mat' -a 'C:\ratter\ExperPort\Utility\MassMeister\update_lists.m' -a 'C:\ratter\ExperPort\Utility\MassMeister\update_names.m' -a 'C:\ratter\ExperPort\MySQLUtility\zlibwapi.dll' -a 'C:\ratter\ExperPort\MySQLUtility\bdata.p' -a 'C:\ratter\ExperPort\MySQLUtility\LIBMYSQL.dll' -a 'C:\ratter\ExperPort\MySQLUtility\mym.m' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexw32' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexa64' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci64' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci.tiger' -a 'C:\ratter\ExperPort\MySQLUtility\win64\libmysql.dll' -a 'C:\ratter\ExperPort\MySQLUtility\win64\mym.mexw64' -a 'C:\ratter\ExperPort\Modules\Settings.m' -a 'C:\ratter\ExperPort\Settings\Settings_Default.conf' -a 'C:\ratter\ExperPort\Settings\Settings_BrodylabRig.conf' -a 'C:\ratter\ExperPort\Settings\Settings_Custom.conf' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexa64.phenom' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexa64cuda' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexglx' -a 'C:\ratter\ExperPort\Utility\MassMeister\send_massdrop_text.m' -a 'C:\Program Files\Matlab\R2008b\toolbox\matlab\iofun\sendmail.m' -a 'C:\Program Files\Matlab\R2008b\toolbox\matlab\uitools\setpref.m' -a 'C:\Program Files\Matlab\R2008b\toolbox\matlab\general\java.m' -a 'C:\ratter\ExperPort\Utility\AutomatedEmails\set_email_sender.p' -a 'C:\ratter\ExperPort\Utility\MassMeister\get_movedrats.m' -a 'C:\ratter\Rigscripts\startup.m' -a 'C:\ratter\ExperPort\Utility\MassMeister\MM_get_tech_instructions.m' -a 'C:\ratter\ExperPort\Modules\bSettings.m'  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\mcc.enc 
+Processing C:\ratter\ExperPort\Utility\MassMeister\MassMeister.fig 
+Processing C:\ratter\ExperPort\Utility\MassMeister\MassMeister_Properties.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\stats\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\guide\guideopts.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\winfun\actxcontrolselect.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\winfun\actxcontrolcreateproperty.fig 
+Processing C:\Program Files\Matlab\R2008b\toolbox\instrument\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\control\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\shared\controllib\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\signal\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\ident\mcc.enc 
+Processing C:\Program Files\Matlab\R2008b\toolbox\finance\mcc.enc 
+Processing include files... 
+2 item(s) added. 
+Processing directories installed with MCR... 
+The file C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src\mccExcludedFiles.log contains a list of functions excluded from the CTF archive. 
+12 item(s) added. 
+Generating MATLAB path for the compiled application... 
+Created 68 path items. 
+Begin validation of MEX files: Thu Aug 22 11:51:16 2019  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\bdschur.mexw32'.  
+Found M-file 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\bdschur.m'.  
+MEX file  
+    'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\bdschur.mexw32'  
+ is valid. It contains 'mexFunction.'  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\ddaeresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\ddaesim.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\frdelay.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\frkernel.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\hlyapslv.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\lyapslv.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\matscale.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\mimozero.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\normrank.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\quadgp1.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\quadgp2.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\ssfresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\ssresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\sssim.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\sylvslv.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\tfresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\tfsim.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\triperm.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\zpkboderesp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\zpkfresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\zpkresp.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\control\ctrlutil\zpksim.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\ident\nlident\@linear\soevaluate.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\ident\nlident\@wavenet\soevaluate.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\instrument\instrument\private\privateCOMGetErrorInfo.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\instrument\instrument\private\privateGetGpib32DllVendor.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\instrument\instrument\private\privateLoadIviClass.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\Program Files\Matlab\R2008b\toolbox\signal\signal\private\upfirdnmex.mexw32'.  
+No conflicting M-file found.  
+Validating 'C:\ratter\ExperPort\MySQLUtility\mym.mexw32'.  
+Found M-file 'C:\ratter\ExperPort\MySQLUtility\mym.m'.  
+MEX file  
+    'C:\ratter\ExperPort\MySQLUtility\mym.mexw32'  
+ is valid. It contains 'mexFunction.'  
+End validation of MEX files: Thu Aug 22 11:51:35 2019  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Deleting 57 temporary MEX authorization files.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_18582_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_6263_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_22204_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_7522_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_25472_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_10147_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_10679_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_16949_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_15869_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_22155_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_5664_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_29915_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_5290_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_1002_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_529_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_15379_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_26648_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_12185_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_10584_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_29321_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_15896_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_18106_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_2262_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_5288_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_2101_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_54_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_6437_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_8367_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_21377_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_23915_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_7294_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_15623_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_9621_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_8990_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_985_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_6356_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_10963_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_24247_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_12117_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_15050_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_6638_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_19373_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_3547_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_12865_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_28845_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_11583_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_24574_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_24204_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_28139_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_28773_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_8742_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_16519_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_27875_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_10758_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_25070_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_2672_5276.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_1450_5276.auth'.  
+Parsing file "C:\ratter\ExperPort\Utility\MassMeister\MassMeister.m" 
+	(Referenced from: "Compiler Command Line").  
+Parsing file "C:\Program Files\Matlab\R2008b\toolbox\compiler\deploy\deployprint.m" 
+	(Referenced from: "Compiler Command Line").  
+Parsing file "C:\Program Files\Matlab\R2008b\toolbox\compiler\deploy\printdlg.m" 
+	(Referenced from: "Compiler Command Line").  
+Generating file "C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src\MassMeister_main.c".  
+Generating file "C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src\MassMeister_delay_load.c".  
+Generating file "C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src\readme.txt".  
+Generating file "C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src\MassMeister_mcc_component_data.c".  
+Contents of temporary response file 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_5418':  
+ ......................  
+' -O -v -output "MassMeister" -I"C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src" "C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src\MassMeister_main.c" "C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src\MassMeister_delay_load.c" "C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src\MassMeister_mcc_component_data.c" -link exe  -env MCR_DELAYLOAD=/delayload:mclmcrrt79.dll -env MCR_DELAYLIB=delayimp.lib -outdir "C:\ratter\ExperPort\Utility\MassMeister\MassMeister\src"'  
+......................  
+Executing command: mbuild  "@C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_5276_5418"  
+ This is mbuild Copyright 1984-2006 The MathWorks, Inc. 
+ 
+-> Default options filename found in C:\Users\brodylab\AppData\Roaming\MathWorks\MATLAB\R2008b 
+---------------------------------------------------------------- 
+->    Options file           = C:\Users\brodylab\AppData\Roaming\MathWorks\MATLAB\R2008b\compopts.bat 
+->    COMPILER               = lcc 
+->    Compiler flags: 
+         COMPFLAGS           = -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup 
+         OPTIMFLAGS          = -DNDEBUG 
+         DEBUGFLAGS          = -g4 
+         arguments           =  -IC:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC 
+         Name switch         = -Fo 
+->    Pre-linking commands   =  
+->    LINKER                 = lcclnk 
+->    Link directives: 
+         LINKFLAGS           = -tmpdir "C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\." -L"C:\PROGRA~1\Matlab\R2008b\sys\lcc\lib" -libpath "C:\PROGRA~1\Matlab\R2008b\extern\lib\win32\lcc" 
+         LINKFLAGSPOST       = mclmcrrt.lib 
+         Name directive      = -o "C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\MassMeister.exe" 
+         File link directive =  
+         Lib. link directive =  
+         Rsp file indicator  = @ 
+->    Resource Compiler      =  
+->    Resource Linker        =  
+---------------------------------------------------------------- 
+ 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\MassMeister_main.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\MassMeister_main.c 
+ 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\MassMeister_delay_load.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\MassMeister_delay_load.c 
+ 
+Warning C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\MassMeister_delay_load.c: 21  static `void function(void) FailedToLoadMCR' is not referenced 
+0 errors, 1 warnings 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\MassMeister_mcc_component_data.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\MassMeister_mcc_component_data.c 
+ 
+    Contents of C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\mbuild_tmp.rsp: 
+  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\MassMeister_main.obj  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\MassMeister_delay_load.obj  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\MassMeister_mcc_component_data.obj 
+ 
+ 
+--> lcclnk -o "C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\MassMeister.exe" -tmpdir "C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\." -L"C:\PROGRA~1\Matlab\R2008b\sys\lcc\lib" -libpath "C:\PROGRA~1\Matlab\R2008b\extern\lib\win32\lcc"  @C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\MBUILD~1.RSP  mclmcrrt.lib 
+ 
+Manually moving MassMeister.exe to C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\MassMeister.exe 
+Manually moving MassMeister.lib to C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\MassMeister.lib 
+Manually moving MassMeister.exp to C:\RATTER\EXPERP~1\UTILITY\MASSME~1\MASSME~1\SRC\MassMeister.exp 
+ 
+--> "if exist C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib.def del C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib.def" 
+ 
+ 
+--> "if exist C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib_stub.obj del C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib_stub.obj" 
+ 

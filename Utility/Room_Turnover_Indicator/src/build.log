@@ -1,0 +1,107 @@
+Warning: Function C:\ratter\ExperPort\FakeRP\isvector.m has the same name as a 
+MATLAB builtin. We suggest you rename the function to avoid a potential name 
+conflict.  
+Compiler version: 4.9 (R2008b)  
+Warning: Duplicate directory name: C:\ratter\ExperPort\Utility.  
+mcc -o 'Room_Turnover_Indicator' -W 'WinMain:Room_Turnover_Indicator' -d 'C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src' -T 'link:exe' -v 'C:\ratter\ExperPort\Utility\room_turnover_indicator.m' -a 'C:\ratter\ExperPort\MySQLUtility\bdata.p' -a 'C:\ratter\ExperPort\MySQLUtility\LIBMYSQL.dll' -a 'C:\ratter\ExperPort\MySQLUtility\libmysqlclient.15.dylib' -a 'C:\ratter\ExperPort\MySQLUtility\libmysqlclient.dylib' -a 'C:\ratter\ExperPort\MySQLUtility\libmysqlclient.so.15' -a 'C:\ratter\ExperPort\MySQLUtility\libmysqlclient.so.16' -a 'C:\ratter\ExperPort\MySQLUtility\mym.cpp' -a 'C:\ratter\ExperPort\MySQLUtility\mym.h' -a 'C:\ratter\ExperPort\MySQLUtility\mym.m' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexa64' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexa64.phenom' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexa64cuda' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexglx' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci.tiger' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexmaci64' -a 'C:\ratter\ExperPort\MySQLUtility\mym.mexw32' -a 'C:\ratter\ExperPort\MySQLUtility\zlibwapi.dll' -a 'C:\ratter\ExperPort\MySQLUtility\win64\libmysql.dll' -a 'C:\ratter\ExperPort\MySQLUtility\win64\mym.mexw64' -a 'C:\ratter\ExperPort\MySQLUtility\win64\zlibwapi.dll'  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Processing C:\Program Files\Matlab\R2008b\toolbox\matlab\mcc.enc 
+Processing include files... 
+2 item(s) added. 
+Processing directories installed with MCR... 
+The file C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src\mccExcludedFiles.log contains a list of functions excluded from the CTF archive. 
+2 item(s) added. 
+Generating MATLAB path for the compiled application... 
+Created 46 path items. 
+Begin validation of MEX files: Fri May 04 15:11:50 2018  
+Validating 'C:\ratter\ExperPort\MySQLUtility\mym.mexw32'.  
+Found M-file 'C:\ratter\ExperPort\MySQLUtility\mym.m'.  
+MEX file  
+    'C:\ratter\ExperPort\MySQLUtility\mym.mexw32'  
+ is valid. It contains 'mexFunction.'  
+End validation of MEX files: Fri May 04 15:11:50 2018  
+Warning: Name is nonexistent or not a directory: C:\Program 
+Files\Matlab\R2008b\toolbox\compiler\patch.  
+Deleting 13 temporary MEX authorization files.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_1665_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_4717_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_2323_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_29581_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_12233_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_4939_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_16021_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_8179_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_25621_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_26922_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_1774_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_585_1812.auth'.  
+Removing: 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_16179_1812.auth'.  
+Parsing file "C:\ratter\ExperPort\Utility\room_turnover_indicator.m" 
+	(Referenced from: "Compiler Command Line").  
+Parsing file "C:\Program Files\Matlab\R2008b\toolbox\compiler\deploy\deployprint.m" 
+	(Referenced from: "Compiler Command Line").  
+Parsing file "C:\Program Files\Matlab\R2008b\toolbox\compiler\deploy\printdlg.m" 
+	(Referenced from: "Compiler Command Line").  
+Generating file "C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src\Room_Turnover_Indicator_main.c".  
+Generating file "C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src\Room_Turnover_Indicator_delay_load.c".  
+Generating file "C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src\readme.txt".  
+Generating file "C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src\Room_Turnover_Indicator_mcc_component_data.c".  
+Contents of temporary response file 'C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_5758':  
+ ......................  
+' -O -v -output "Room_Turnover_Indicator" -I"C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src" "C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src\Room_Turnover_Indicator_main.c" "C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src\Room_Turnover_Indicator_delay_load.c" "C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src\Room_Turnover_Indicator_mcc_component_data.c" -link exe  -env MCR_DELAYLOAD=/delayload:mclmcrrt79.dll -env MCR_DELAYLIB=delayimp.lib -outdir "C:\ratter\ExperPort\Utility\Room_Turnover_Indicator\src"'  
+......................  
+Executing command: mbuild  "@C:\Users\brodylab\AppData\Local\Temp\mathworks_tmp_1812_5758"  
+ This is mbuild Copyright 1984-2006 The MathWorks, Inc. 
+ 
+-> Default options filename found in C:\Users\brodylab\AppData\Roaming\MathWorks\MATLAB\R2008b 
+---------------------------------------------------------------- 
+->    Options file           = C:\Users\brodylab\AppData\Roaming\MathWorks\MATLAB\R2008b\compopts.bat 
+->    COMPILER               = lcc 
+->    Compiler flags: 
+         COMPFLAGS           = -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup 
+         OPTIMFLAGS          = -DNDEBUG 
+         DEBUGFLAGS          = -g4 
+         arguments           =  -IC:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC 
+         Name switch         = -Fo 
+->    Pre-linking commands   =  
+->    LINKER                 = lcclnk 
+->    Link directives: 
+         LINKFLAGS           = -tmpdir "C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\." -L"C:\PROGRA~1\Matlab\R2008b\sys\lcc\lib" -libpath "C:\PROGRA~1\Matlab\R2008b\extern\lib\win32\lcc" 
+         LINKFLAGSPOST       = mclmcrrt.lib 
+         Name directive      = -o "C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\Room_Turnover_Indicator.exe" 
+         File link directive =  
+         Lib. link directive =  
+         Rsp file indicator  = @ 
+->    Resource Compiler      =  
+->    Resource Linker        =  
+---------------------------------------------------------------- 
+ 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\Room_Turnover_Indicator_main.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\Room_Turnover_Indicator_main.c 
+ 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\Room_Turnover_Indicator_delay_load.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\Room_Turnover_Indicator_delay_load.c 
+ 
+Warning C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\Room_Turnover_Indicator_delay_load.c: 21  static `void function(void) FailedToLoadMCR' is not referenced 
+0 errors, 1 warnings 
+ 
+--> lcc  -IC:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC -c -Zp8 -I"C:\PROGRA~1\Matlab\R2008b\sys\lcc\include" -noregistrylookup -FoC:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\Room_Turnover_Indicator_mcc_component_data.obj -IC:\PROGRA~1\Matlab\R2008b\extern\include -IC:\PROGRA~1\Matlab\R2008b\simulink\include -DNDEBUG C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\Room_Turnover_Indicator_mcc_component_data.c 
+ 
+    Contents of C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\mbuild_tmp.rsp: 
+  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\Room_Turnover_Indicator_main.obj  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\Room_Turnover_Indicator_delay_load.obj  C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\Room_Turnover_Indicator_mcc_component_data.obj 
+ 
+ 
+--> lcclnk -o "C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\Room_Turnover_Indicator.exe" -tmpdir "C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\." -L"C:\PROGRA~1\Matlab\R2008b\sys\lcc\lib" -libpath "C:\PROGRA~1\Matlab\R2008b\extern\lib\win32\lcc"  @C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\MBUILD~1.RSP  mclmcrrt.lib 
+ 
+Manually moving Room_Turnover_Indicator.exe to C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\Room_Turnover_Indicator.exe 
+Manually moving Room_Turnover_Indicator.lib to C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\Room_Turnover_Indicator.lib 
+Manually moving Room_Turnover_Indicator.exp to C:\RATTER\EXPERP~1\UTILITY\ROOM_T~1\SRC\Room_Turnover_Indicator.exp 
+ 
+--> "if exist C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib.def del C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib.def" 
+ 
+ 
+--> "if exist C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib_stub.obj del C:\USERS\BRODYLAB\APPDATA\LOCAL\TEMP\MBUILD~1\templib_stub.obj" 
+ 
