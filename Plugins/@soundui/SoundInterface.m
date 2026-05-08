@@ -178,12 +178,14 @@ switch action,
         make_invisible(eval([sname 'Collisions']));
         make_invisible(eval([sname 'ForceCount']));
         
-        MenuParam(obj, [sname 'Style'], {'Tone','Bups','ToneSweep','BupsSweep','ToneFMWiggle','WhiteNoise','WhiteNoiseRamp','WhiteNoiseTone','SpectrumNoise','AMTone','PClick','PClick_Freq','File'}, Style, x,y, 'labelfraction', 0.3);next_row(y);
+        MenuParam(obj, [sname 'Style'], {'Tone','Bups','ToneSweep','BupsSweep','ToneFMWiggle','WhiteNoise','WhiteNoiseRamp','WhiteNoiseTone','SpectrumNoise','PinkNoise','AMTone','PClick','PClick_Freq','PClick_Fix','PClick_Freq_Fix','File'}, Style, x,y, 'labelfraction', 0.3);next_row(y);
         set_callback(eval([sname 'Style']),{mfilename, 'set_style', sname; mfilename, 'update', sname;});
         
         SubheaderParam(obj, [sname 'Head'], sname, x,y,'TooltipString',TooltipString);
         PushbuttonParam(obj, [sname 'Play'], x,y, 'label', 'Play', 'position', [x y 30 20]);
-        set_callback(eval([sname 'Play']),{'SoundManagerSection', 'play_sound', sname});
+        %set_callback(eval([sname 'Play']),{'SoundManagerSection', 'play_sound', sname});
+        set_callback(eval([sname 'Play']),{mfilename,'play_sound',sname});
+        
         PushbuttonParam(obj, [sname 'Stop'], x,y, 'label', 'Stop', 'position', [x+30 y 30 20]);
         set_callback(eval([sname 'Stop']),{'SoundManagerSection', 'stop_sound', sname});
         
@@ -548,6 +550,15 @@ switch action,
                     clear tw;
                     eval([sname,'Left_Click_Times.value  = 0;']);
                     eval([sname,'Right_Click_Times.value = 0;']);
+
+                case 'PinkNoise'
+                    t=0:(1/sr):(dur1/1000); t = t(1:end-1);
+                    RW = RVol * pinknoise(size(t));
+                    LW = LVol * pinknoise(size(t));
+                    clear t;
+                    eval([sname,'Left_Click_Times.value  = 0;']);
+                    eval([sname,'Right_Click_Times.value = 0;']);
+
                 case 'PClick',
                     [SW lrate rrate data] = make_pbup(freq1 + freq2, log(freq2 / freq1), sr, dur1/1e3,...
                         'bup_width', width, 'first_bup_stereo', stereo_1st, 'distractor_rate', freqs,...
@@ -569,7 +580,29 @@ switch action,
                     if isempty(data.right); data.right = nan; end
                     eval([sname,'Left_Click_Times.value  = data.left;']);
                     eval([sname,'Right_Click_Times.value = data.right;']);
-                    
+
+                case 'PClick_Fix',
+                    [SW lrate rrate data] = make_pbup_fixed(freq1 + freq2, log(freq2 / freq1), sr, dur1/1e3,...
+                        'bup_width', width, 'first_bup_stereo', stereo_1st, 'distractor_rate', freqs,...
+                        'avoid_collisions',~collision, 'force_count',forcecount,'is_fixed', 1); %#ok<NASGU>
+                    LW = SW(1,:) * LVol;
+                    RW = SW(2,:) * RVol;
+                    if isempty(data.left);  data.left  = nan; end
+                    if isempty(data.right); data.right = nan; end
+                    eval([sname,'Left_Click_Times.value  = data.left;']);
+                    eval([sname,'Right_Click_Times.value = data.right;']);        
+
+                case 'PClick_Freq_Fix'    
+                    [SW,lrate,rrate,data] = make_pbup_fixed(freq1 + freq2, log(freq2 / freq1), sr, dur1/1e3,...
+                        'bup_width', width, 'first_bup_stereo', 0, 'task_type', 0, 'base_freq', freqs,...
+                        'avoid_collisions',~collision, 'force_count',forcecount,'ntones',1,'is_fixed', 1); %#ok<NASGU>
+                    LW = SW(1,:) * LVol;
+                    RW = SW(2,:) * RVol;
+                    if isempty(data.left);  data.left  = nan; end
+                    if isempty(data.right); data.right = nan; end
+                    eval([sname,'Left_Click_Times.value  = data.left;']);
+                    eval([sname,'Right_Click_Times.value = data.right;']);
+                                 
                 case 'File',
                     % warning('Plugins:SoundInterface:SoundFilesNotDone','Loading sounds from files not implemented yet');
                     [LW, RW]=getWavefromFile(value(eval([sname 'SndsMenu'])), sr, LVol, RVol);
@@ -630,12 +663,18 @@ switch action,
                 val_flag=1.4;
             case 'SpectrumNoise',
                 val_flag=1.5;
+            case 'PinkNoise',
+                val_flag=1.6;
             case {'ToneSweep', 'BupsSweep'}
                 val_flag=2;
             case {'PClick'}
                 val_flag=2.1;
             case {'PClick_Freq'}
-                val_flag=2.1;    
+                val_flag=2.1; 
+            case {'PClick_Fix'}
+                val_flag = 2.1;
+            case {'PClick_Freq_Fix'}
+                val_flag=2.1;   
             case {'File'}
                 val_flag=0;
             otherwise
@@ -717,6 +756,11 @@ switch action,
             make_invisible(eval([sname 'Sigma']));
         end;
         
+        if val_flag==1.6
+            disable(eval([sname 'Freq1']));
+            make_invisible(eval([sname 'WNP']));
+        end
+        
         if val_flag==2
             make_visible(eval([sname 'Gap']));
             make_invisible(eval([sname 'WNP']));
@@ -765,6 +809,23 @@ switch action,
             eval([sname 'Vol.value = min(max_vol, value(' sname 'Vol));'])
         end
         feval(mfilename,obj,'update',sname);
+        
+        %% play_sound
+    case 'play_sound'
+        
+        if bSettings('get','RIGS','bpod') == 1 && ...
+           strcmp(bSettings('get','RIGS','sound_machine_server'),'localhost')
+            global BpodSystem
+            
+            if strcmp(class(BpodSystem.PluginObjects.SoundServer),'BpodAudioPlayer')
+                SoundManagerSection(obj, 'send_not_yet_uploaded_sounds');
+                BpodSystem.PluginObjects.SoundServer.push;
+            end
+        end
+        pause(3);
+        SoundManagerSection(obj,'play_sound', sname);
+        
+        
         %% close
     case 'close'
         % delete all SoloParamHandles who belong to this object and whose
