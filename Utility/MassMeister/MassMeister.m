@@ -66,7 +66,7 @@ handles = update_ratname(handles);
 
 %Let's try to establish a connection to the balance
 try
-    if strcmp(handles.scale,'STX421');
+    if strcmp(handles.scale,'STX421')
         handles.balance = serial(handles.comscale);
         set(handles.balance,'Terminator','LF');
         fopen(handles.balance);
@@ -79,6 +79,13 @@ try
         fopen(handles.balance);
         set(handles.status_text,'string','Please select your name.',...
             'backgroundcolor',[1 1 1]);
+        
+    elseif strcmp(handles.scale,'STX2201')
+        handles.balance = serial(handles.comscale);
+        set(handles.balance,'Terminator','CR/LF');
+        fopen(handles.balance);
+        set(handles.status_text,'string','Please select your name.',...
+            'backgroundcolor',[1 1 1]);    
     end
 catch %#ok<CTCH>
     handles.balance = [];
@@ -207,15 +214,21 @@ else
         end
         
         %Let's get the mass off the balance   
-        if strcmp(handles.scale,'STX421')
+        if strcmp(handles.scale,'STX421') || strcmp(handles.scale,'STX2201')
             ba=get(handles.balance,'BytesAvailable'); 
-            while ba > 0; 
+            while ba > 0
                 fscanf(handles.balance); 
                 ba=get(handles.balance,'BytesAvailable'); 
                 pause(0.01); 
             end
         end
-        fprintf(handles.balance,'P'); 
+        
+        if strcmp(handles.scale,'STX2201')
+            fprintf(handles.balance,'IP');
+        else
+            fprintf(handles.balance,'P');
+        end
+        
         m = fscanf(handles.balance);
         if (now-cyclestart)*24*3600 > timeout
             set(handles.start_toggle,'backgroundcolor',[0 1 0],'string','Start','value',0); 
@@ -236,6 +249,11 @@ else
         if strcmp(handles.scale,'STX421')
             m(m=='?') = '';
             m=str2num(m);
+        elseif strcmp(handles.scale,'STX2201')
+            %st = strfind(m,'Net:');
+            ed = find(m == 'g');
+            %m = str2num(m(st+4:ed-1));
+            m = round(str2num(m(1:ed-1)));
         elseif strcmp(handles.scale,'SPE6000')
             m = str2num(m(2:12)); %#ok<ST2NM>
         end
@@ -260,7 +278,7 @@ else
                         foundstable = 1;
                         
                         ratname = get(handles.ratname_text,'string');
-                        weight = round(mean(M));
+                        weight = round(mean(M)*(10^handles.precision))/(10^handles.precision);
                         
                         %If we have an entry for this rat today, delete it
                         try

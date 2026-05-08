@@ -22,7 +22,7 @@ function varargout = MassMeister_Properties(varargin)
 
 % Edit the above text to modify the response to help MassMeister_Properties
 
-% Last Modified by GUIDE v2.5 15-Aug-2019 12:42:50
+% Last Modified by GUIDE v2.5 15-Feb-2022 17:20:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -115,6 +115,7 @@ properties.numreads  = str2num(get(handles.numreads_edit, 'string'));
 properties.threshold = str2num(get(handles.threshold_edit,'string'));
 properties.error     = str2num(get(handles.error_edit,    'string'));
 properties.smallrat  = str2num(get(handles.smallrat_edit, 'string'));
+properties.precision = str2num(get(handles.precision_edit,'string'));
 properties.scale     = get(handles.scale_edit,            'string');
 properties.comscale  = get(handles.comscale_edit,         'string');
 properties.comrfid   = get(handles.comrfid_edit,          'string');
@@ -251,6 +252,29 @@ function comrfid_edit_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function comrfid_edit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to comrfid_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function precision_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to precision_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of precision_edit as text
+%        str2double(get(hObject,'String')) returns contents of precision_edit as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function precision_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to precision_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

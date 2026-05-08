@@ -9,7 +9,12 @@ end
 file = [pname,filesep,'Properties.mat'];
 handles.file = file;
 if exist(file,'file') == 2
+    properties = [];
     load(file);
+    
+    if ~isfield(properties,'precision')
+        properties.precision = 0;
+    end
     
     if isfield(handles,'minmass_edit')
         set(handles.minmass_edit,  'string',num2str(properties.minmass));
@@ -18,6 +23,7 @@ if exist(file,'file') == 2
         set(handles.threshold_edit,'string',num2str(properties.threshold));
         set(handles.error_edit,    'string',num2str(properties.error));
         set(handles.smallrat_edit, 'string',num2str(properties.smallrat));
+        set(handles.precision_edit,'string',num2str(properties.precision));
         set(handles.scale_edit,    'string',properties.scale);
         set(handles.comscale_edit, 'string',properties.comscale);
         set(handles.comrfid_edit,  'string',properties.comrfid);
@@ -32,6 +38,7 @@ if exist(file,'file') == 2
         handles.scale     = properties.scale;
         handles.comscale  = properties.comscale;
         handles.comrfid   = properties.comrfid;
+        handles.precision = properties.precision;
     end
 else
     if ~isfield(handles,'minmass_edit')
@@ -41,6 +48,7 @@ else
         handles.threshold = 0.4;
         handles.error     = 5;
         handles.smallrat  = 225;
+        handles.precision = 0;
         handles.scale     = 'SPE6000';
         handles.comscale  = 'COM3';
         handles.comrfid   = 'COM51';
