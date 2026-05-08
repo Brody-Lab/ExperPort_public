@@ -55,7 +55,7 @@ if ~exist([userinitials '_settings.mat'], 'file')
     numlines = 1;
     %GET MAX RIGID
     sqlstr = ['SELECT MAX(rig) AS maxrig FROM ratinfo.schedule WHERE date="' datestr(now, 29) '";'];
-    data = mym(bdata, sqlstr);
+    data = bdata(sqlstr);
     defaultanswer = {num2str(1:data.maxrig)};
     defaultanswer = regexprep(defaultanswer, '\s+', ',');
     options.WindowStyle = 'modal';
@@ -232,7 +232,7 @@ set(handles.popupSession, 'Value', length(sessionlist));
 set(handles.editUserInitials, 'String', userinitials);
 
 sqlstr = ['SELECT MAX(timeslot) AS maxtimeslot FROM ratinfo.schedule WHERE date="' datestr(now, 29) '";'];
-data = mym(bdata, sqlstr);
+data = bdata(sqlstr);
 
 EXTRA_LIST_ITEMS = {'Non-training, water deprived rats', 'Recovering, free water rats', 'Recovering rats', 'Unassigned rats', 'All rats'};
 

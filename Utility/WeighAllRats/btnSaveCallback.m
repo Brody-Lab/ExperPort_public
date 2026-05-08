@@ -23,15 +23,15 @@ if strcmp(answer, 'YES')
         
         if ISNEWLIST(ctr)
             sqlstr = ['SELECT weighing FROM ratinfo.mass WHERE ratname="' RATLIST{ctr} '" AND date="' datestr(now, 29) '";'];
-            data = mym(bdata, sqlstr);
+            data = bdata(sqlstr);
             if isempty(data.weighing) && ~isempty(MASSLIST{ctr}) %#ok<USENS>
                 sqlstr = ['INSERT INTO ratinfo.mass (ratname, date, mass, tech) ' ...
                     'VALUES ("' RATLIST{ctr} '", "' datestr(now, 29), '", ', num2str(round(eval(MASSLIST{ctr}))), ', "', userinitials, '");'];
-                mym(bdata, sqlstr);
+                bdata(sqlstr); %needs to be changed to a procedure
             else
                 if ~isempty(MASSLIST{ctr})
                     sqlstr = ['CALL ratinfo.update_mass_tbl(' num2str(data.weighing(1)) ', ' num2str(round(eval(MASSLIST{ctr}))), ', "' userinitials '")'];
-                    mym(bdata, sqlstr);
+                    bdata(sqlstr);
                 end
             end
         end

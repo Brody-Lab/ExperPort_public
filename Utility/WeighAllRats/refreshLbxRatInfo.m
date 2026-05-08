@@ -128,7 +128,7 @@ if sessionValue <= maxtimeslot
                 'WHERE date="' datestr(now, 29) '" ' ...
                 'AND timeslot=' num2str(sessionValue) ' ' ...
                 'AND rig=' num2str(RIGORDER_VECTOR(ctr)) ';'];
-            data = mym(bdata, sqlstr);
+            data = bdata(sqlstr);
             if ~isempty(data.ratname) && ~isempty(strtrim(data.ratname{1})) && ismember(strtrim(data.ratname{1}), RATLIST)
                 custom_subratlist{ctr_custom_subratlist} = data.ratname{1};
                 x = find(strcmp(custom_subratlist{ctr_custom_subratlist}, subratlist));

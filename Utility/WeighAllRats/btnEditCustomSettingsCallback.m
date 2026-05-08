@@ -16,7 +16,7 @@ if exist([userinitials '_settings.mat'], 'file')
     defaultAnswer = {regexprep(defaultAnswer, '\s+', ',')};
 else
     sqlstr = ['SELECT MAX(rig) AS maxrig FROM ratinfo.schedule WHERE date="' datestr(now, 29) '";'];
-    data = mym(bdata, sqlstr);
+    data = bdata(sqlstr);
     defaultAnswer = {num2str(1:data.maxrig)};
 end
 
