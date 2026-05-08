@@ -1,4 +1,6 @@
-function upload_delete_old_video
+function upload_delete_old_video(do_delete_after,varargin)
+
+if nargin < 1; do_delete_after = 1095; end
 
 bpath  = 'X:\RATTER\Video';
 
@@ -13,46 +15,49 @@ for i = 1:numel(vfiles)
     bfile = [bpath,vfiles(i).dir,filesep,vfiles(i).name];
     bdir  = [bpath,vfiles(i).dir];
     
-    if ~exist(bfile,'file')
-        
-        if ~exist(bdir,'dir')
-            try
-                mkdir(bdir);
-                disp(['Making directory ',bdir,'...']);
-            catch
-                disp(['Unable to make ',bdir]);
-                continue;
-            end
-        end
+    if numel(vfiles(i).name) > 4 && strcmp(vfiles(i).name(end-2:end),'mp4')
     
-        try
-            copyfile(vfile,bfile,'f');
-            disp(['Uploaded ',vfile]);
-        catch
-            disp(['Unable to upload ',vfile]);
-            continue;
-        end
-    else
-        bfiledata = dir(bfile);
-        if bfiledata.bytes < vfiles(i).bytes
-            
+        if ~exist(bfile,'file')
+
+            if ~exist(bdir,'dir')
+                try
+                    mkdir(bdir);
+                    disp(['Making directory ',bdir,'...']);
+                catch
+                    disp(['Unable to make ',bdir]);
+                    continue;
+                end
+            end
+
             try
                 copyfile(vfile,bfile,'f');
-                disp(['Replaced ',bfile]);
+                disp(['Uploaded ',vfile]);
             catch
-                disp(['Unable to replace ',bfile]);
+                disp(['Unable to upload ',vfile]);
                 continue;
             end
+        else
+            bfiledata = dir(bfile);
+            if bfiledata.bytes < vfiles(i).bytes
+
+                try
+                    copyfile(vfile,bfile,'f');
+                    disp(['Replaced ',bfile]);
+                catch
+                    disp(['Unable to replace ',bfile]);
+                    continue;
+                end
+            end
         end
-    end
-    
-    if now - datenum(vfiles(i).date,'dd-mmm-yyyy HH:MM:SS') > 14
-        try
-            delete(vfile);
-            disp(['Deleted ',vfile]);
-        catch
-            disp(['Unable to delete ',vfile]);
-            continue;
+
+        if now - datenum(vfiles(i).date,'dd-mmm-yyyy HH:MM:SS') > do_delete_after
+            try
+                delete(vfile);
+                disp(['Deleted ',vfile]);
+            catch
+                disp(['Unable to delete ',vfile]);
+                continue;
+            end
         end
     end
 end

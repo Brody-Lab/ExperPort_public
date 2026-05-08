@@ -43,7 +43,11 @@ if nargin > 0
 else
     pname = bSettings('get','GENERAL','Protocols_Directory');
     try
-        load([pname,filesep,'@WaterCalibration',filesep,'custom_preferences.mat']);
+        if bSettings('get','RIGS','bpod') == 1
+            load([pname,filesep,'@WaterCalibrationBPod',filesep,'custom_preferences.mat']);
+        else
+            load([pname,filesep,'@WaterCalibration',filesep,'custom_preferences.mat']);
+        end
         HighTarget = custom_prefs.HighTarget;
         LowTarget  = custom_prefs.LowTarget;
         Tolerance  = custom_prefs.Tolerance;

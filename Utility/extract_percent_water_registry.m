@@ -31,8 +31,12 @@ if ~isempty(comments);
     end
 end
 
-if ptemp < 3 
+israt = bdata(['select israt from ratinfo.rats where ratname="',ratname,'"']);
+
+if israt == 1 && ptemp < 3 
     ptemp = 3;
+elseif israt == 0 && ptemp < 4
+    ptemp = 4;
 elseif isnan(ptemp) || isempty(ptemp)
     ptemp = 20;
 end

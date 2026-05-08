@@ -1,7 +1,6 @@
-function files = file_recurser(p,skip,maindir,date_threshold,dateside,varargin) %#ok<INUSD>
+function files = file_recurser(p,skip,maindir,varargin) %#ok<INUSD>
 
 if nargin < 3; maindir = ''; end %#ok<NASGU>
-if nargin < 4; date_threshold = []; dateside = 0; end
 
 oldfolders{1} = p;
 newfolders = [];
@@ -17,7 +16,7 @@ nonew = 0;
 
 cnt1 = 0;
 cnt2 = 1; c2 = num2str(cnt2);
-maxcnt = 1e2;
+maxcnt = 1e4;
 
 files1(1:maxcnt) = temp; %#ok<NASGU>
 
@@ -38,21 +37,6 @@ while nonew == 0
             if strcmp(x(j).name,'.') || strcmp(x(j).name,'..');                        continue; end
             if x(j).isdir == 1; newfolders{end+1} = [oldfolders{i},filesep,x(j).name]; continue; end %#ok<AGROW>
             if isempty(x(j).bytes) || isnan(x(j).bytes);                               continue; end
-            
-            if ~isempty(date_threshold)
-                if strcmp(dateside,'Older')
-                    if datenum(x(j).date,'dd-mmm-yyyy HH:MM:SS') > date_threshold
-                        continue;
-                    end
-                elseif strcmp(dateside,'Younger')
-                    if datenum(x(j).date,'dd-mmm-yyyy HH:MM:SS') < date_threshold
-                        continue;
-                    end
-                else
-                    disp('dateside input must be "Older" or "Younger"');
-                    return;
-                end
-            end
             
             foundfile = 1;
             cnt1 = cnt1+1;
@@ -102,7 +86,7 @@ for i = 1:cnt2
     files = [files eval(['files',num2str(i)])]; %#ok<AGROW>
 end
                 
-disp(['Total Files: ',num2str(totalfiles),'   Total Bytes: ',num2bytes(totalbytes)]);
+%disp(['Total Files: ',num2str(totalfiles),'   Total Bytes: ',num2bytes(totalbytes)]);
 
 
 

@@ -1,4 +1,4 @@
-function commit_datafile_session(datafile)
+function commit_datafile_session(datafile,settingsfile)
 
 %Takes a SoloData data file and attempts to commit it to the sessions and
 %parsed_events MySQL tables.
@@ -58,6 +58,8 @@ protobj=eval(protocol);
 load_soloparamvalues(ratname,'experimenter',expname ,...
     'owner', class(protobj), 'interactive', 0,'data_file',datafile);
 
+SavingSection(protobj,'set','data_file',datafile);
+
 try
     feval(protocol, protobj, 'pre_saving_settings');
     disp('Commit COMPLETED');
@@ -68,6 +70,7 @@ catch
     disp(x.message);
     disp(x.stack);
 end
+SavingSection(eval(protocol),'savesets','interactive',0,'fullfilename',settingsfile);
 
 dispatcher('set_protocol','');
 dispatcher('close');
