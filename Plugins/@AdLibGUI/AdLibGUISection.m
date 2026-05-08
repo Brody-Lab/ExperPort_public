@@ -11,6 +11,7 @@
 %  a good idea to try to use both plugins in your protocol.
 %
 %  Christine Constantinople, May 2014
+%  Modifed by Jess Breda, June 2023
 %
 %
 % HOW THE PLUGIN WORKS:
@@ -92,20 +93,53 @@
 %   protocol and the rat actually being put into the box and starting
 %   behavior).
 %
-% FOURTH, also in your 'trial_completed' code, you have to feed the plugin
-% two varargin: the correct side (either 'l' or 'r' and whether the trial 
-% was a hit.  
+% FOURTH, also in your 'trial_completed' code, you need to give this plugin
+% information about what just occured so it can either (1) infer the water
+% volume given (using `update_water_volume`) or (2) be told the water 
+% volume given (using `update_water_volume_manual`). We  
 %
-%   Add these two lines:
+%
+% (1) Volume inference using `update_water_volume` and performance
+% variables to track overall volume and side specific volumes delivered.
+% 
+%  NOTE: you only need ONE call to `update_water_volume`, in your
+% `trial_complete` code, these examples just show you the possible inputs.
+% 
+% to use this case, there are three varagins:
+%   side      : str,  either 'l' or 'r', usually side_history(end)
+%   hit       : bool, either 1 or 0,     usually hit_history(end)
+%   temperror : bool, either 1 or 0,     usually temperror_history(end)
+%
+%   Example calls:
+%   --------------
+%   AdLibGUISection(obj, 'update_water_volume', 'r', 1, 0); % hit trial
+%   AdLibGUISection(obj, 'update_water_volume', 'r', 0, 1); % terror trial
+%   AdLibGUISection(obj, 'update_water_volume', 'r', 0, 0); % error trial
+%
+% another way to make sure temp errors w/ water reward are tracked
+% is to create a sph in your protocol that is 1 if there was a rewarded
+% temp error (also called 'delayed' or 'forgivness') or a hit
+%
+%   Example calls:
+%   --------------
+%   AdLibGUISection(obj, 'update_water_volume', 'r', 1); % rewarded trial
+%   AdLibGUISection(obj, 'update_water_volume', 'r', 0); % non-rewarded trial
 %   
-%   x = 'l' or x = 'r', and y = 1 for a hit (if y ~= 1, the water won't be 
-%   tallied for that trial).
-%   AdLibGUISection(obj, 'update_water_volume', x, y);
+% (2) Explicit volume update using `update_water_volume_manual` which takes
+% the volume, in uL, that the animal recieved on the trial. This requires
+% your protocol to do the inference. This case has been written to address 
+% github issue #10 in Experport. In short, give water and water multipliers 
+% features used  by the DMS2 & PWM2 lead to instances where partial or
+% multiplied amounts of the water valve volume in WaterValveSection is 
+% delivered. See the HistorySection of these protocols to learn about 
+% volume calculations.
 %
-%   This allows left and right water volumes to be counted independently.
-%   The varargin (x) MUST BE 'l' or 'r'.  You may need to add a few lines.
+%   Example calls:
+%   --------------
+%   % 13 uL deliverd to right port
+%   AdLibGUISection(... 
+%        obj, 'update_water_volume_manual', 'r', 'water_vol_uL', 13);
 %   
-%
 % FIFTH, in your 'end_session' code, include the following line:
 %
 %    AdLibGUISection(obj, 'evaluate_outcome');
@@ -323,11 +357,21 @@ switch action,
        my_side = varargin{1}; 
        hit_history = varargin{2};
        
-       if hit_history==1
+       % sub logic by Wynne S 2022 to track temp error water in pbups
+       % protocol using temperror_history variable
+       if length(varargin) >2
+           temperr = varargin{3};
+           if temperr == 1
+               hit_history = 1;
+           end
+       end
+      
+       if hit_history==1 
            if numel(varargin{1})~=1 || ~ismember(varargin{1}, {'l' 'r'}),
                error('%s - %s expects exactly one argument, either ''1/l'' for left or ''0/r'' for right!', mfilename, action);
            end;
            nhits.value = value(nhits) + 1;
+           
            try
            [Lvol, Rvol] = WaterValvesSection(obj, 'get_water_volumes');
            catch ME;
@@ -344,7 +388,47 @@ switch action,
                water_as_percent.value = (value(water_delivered)/value(rat_mass))*100;
            end
        end
- 
+       
+%% case update_water_volume_manual      
+    case 'update_water_volume_manual'
+        
+        my_side = varargin{1};
+        % catch any errors in in the inputs
+        if numel(varargin{1})~=1 || ~ismember(varargin{1}, {'l' 'r'}),
+            error('%s - %s expects exactly one argument, either ''1/l'' for left or ''0/r'' for right!', mfilename, action);
+        end
+        
+        method = varargin{2};
+        if ~strcmp(method, 'water_vol_uL')
+            error('%s - %s expects a label for the second argument of "water_vol_uL", not "%s"', mfilename, action, method);
+        end
+        
+        volume_uL = varargin{3};
+        if (volume_uL > 0) && (volume_uL < 0.1) % 0.1 uL can't be delievered by our valves
+            error('volume appears to be in mL, %s-%s expects uL!', mfilename, action);
+        end
+        
+        % append values if water was delievered 
+        if volume_uL > 0
+            % in this case, better to think about this as "n rewarded" trials
+            nhits.value = value(nhits) + 1;
+           
+            % update side specific volumes
+            if my_side == 'r'
+                right_volume.value = right_volume + volume_uL/1000;
+            elseif my_side == 'l'    
+                left_volume.value = left_volume + volume_uL/1000;
+            end
+           
+            % update total session volume
+            water_delivered.value = water_delivered + volume_uL/1000; 
+           
+            % calculate water as a percent of today's mass
+            if ~isnan(value(rat_mass));
+                water_as_percent.value = (value(water_delivered)/value(rat_mass))*100;
+            end
+        end
+        
        
 %% case 'close'
    case 'close'
@@ -409,11 +493,31 @@ switch action,
             last_waterconsumed.value = last_water;
           end
           
+          israt = bdata(['select israt from ratinfo.rats where ratname="',ratname,'"']);
+          if israt == 1
+            [mdate, mass] = bdata(['select date, mass from ratinfo.mass where ratname="{S}" order by date desc limit 1'], ratname);
+          else
+            [mdate,mass] = bdata(['select date, mass from ratinfo.mass where ratname="',ratname,'" order by date']);
+            freewaterdays = find(mass == 0);
+            mass(freewaterdays) = [];
+            mdate(freewaterdays) = [];
+            
+            if numel(mass) >= 7
+                m = max(mass(1:7));
+                mdate = mdate{find(mass == m,1,'first')};
+                mass = m;
+            elseif ~isempty(mass)
+                m = max(mass);
+                mdate = mdate{find(mass == m,1,'first')};
+                mass = m;
+            else
+                mass = 999;
+                mdate = '';
+            end
+          end
           
-          [mdate, mass] = bdata(['select date, mass from ratinfo.mass where ratname="{S}" order by date desc limit 1'], ratname);
-
-          
-          if now-datenum(mdate) >= max_days_wout_weighing,
+          if now-datenum(mdate) >= max_days_wout_weighing && israt == 1,
+             %only do this check for rats, mouse weight uses baseline
              report_message(obj, recipient_list, sprintf('Rat has not been weighed in %d days or more.', ...
                 floor(now - datenum(mdate)))); %#ok<NODEF>
           end;
@@ -426,6 +530,7 @@ switch action,
           [ptemp,exclude] = extract_percent_water_registry(ratname);
           
           total_water_target.value = value(rat_mass)*(ptemp / 100);
+          target.value = ptemp;
           
           
        catch ME, report_error(obj, recipient_list, ME);
