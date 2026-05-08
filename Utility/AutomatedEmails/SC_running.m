@@ -112,7 +112,14 @@ function handles = SC_running(handles)
                             id = sprintf('%06d\n',round((now-YEAR)*24*60));
                             TS = [TS,' ',id]; %#ok<AGROW>
                             
-                            mym(bdata,['update ratinfo.tech_schedule set ',OLDSHIFT{i},'="',TS,'" where scheduleid=',num2str(ID)]);
+                            %mym(bdata,['update ratinfo.tech_schedule set ',OLDSHIFT{i},'="',TS,'" where scheduleid=',num2str(ID)]);
+                            if i == 1
+                                bdata('call ratinfo.append_tech_schedule_overnight("{S}","{Si}")',TS,ID);
+                            elseif i == 2
+                                bdata('call ratinfo.append_tech_schedule_morning("{S}","{Si}")',TS,ID);
+                            else
+                                bdata('call ratinfo.append_tech_schedule_evening("{S}","{Si}")',TS,ID);
+                            end
                         end
                         DONE(i) = 1;
                     end

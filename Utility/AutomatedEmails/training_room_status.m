@@ -67,11 +67,13 @@ towers = [1,2,3;...
 %     end
 % end
 
-mym(bdata,'update ratinfo.training_room set top="{S}", middle="{S}", bottom="{S}" where tower=1',...
-    r.time,M,W);
+%mym(bdata,'update ratinfo.training_room set top="{S}", middle="{S}", bottom="{S}" where tower=1',r.time,M,W);
+bdata('call ratinfo.update_training_room("{S}","{S}","{S}","{Si}")',r.time,M,W,1);
 
-mym(bdata,'update ratinfo.training_room set top="{S}", middle="{S}", bottom="{S}" where tower=2',...
-    [r.activetech,' ',num2str(N)],r.session,r.duration);      
+if ~isfield(r,'duration'); r.duration = 0; end
+
+%mym(bdata,'update ratinfo.training_room set top="{S}", middle="{S}", bottom="{S}" where tower=2',[r.activetech,' ',num2str(N)],r.session,r.duration);      
+bdata('call ratinfo.update_training_room("{S}","{S}","{S}","{Si}")',[r.activetech,' ',num2str(N)],r.session,r.duration,2)
       
 for i = 1:size(towers,1)      
     for j = 1:size(towers,2)
@@ -80,8 +82,8 @@ for i = 1:size(towers,1)
         end
         temp{j} = [sprintf('%3i',towers(i,j)),': ',status];
     end
-    mym(bdata,'update ratinfo.training_room set top="{S}", middle="{S}", bottom="{S}" where tower={S}',...
-    	temp{1},temp{2},temp{3},i+2);
+    %mym(bdata,'update ratinfo.training_room set top="{S}", middle="{S}", bottom="{S}" where tower={S}',temp{1},temp{2},temp{3},i+2);
+    bdata('call ratinfo.update_training_room("{S}","{S}","{S}","{Si}")',temp{1},temp{2},temp{3},i+2);
 end
 
 bdata('select top, middle, bottom from ratinfo.training_room')

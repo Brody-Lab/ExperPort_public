@@ -15,6 +15,10 @@ try
     file = ['C:\ScheduleBackup\',datestr(now-1,'yyyymmdd'),'.mat'];
     save(file,'x');
     
+    map_bucket_drive
+    file = ['X:\backups\ScheduleBackup\',datestr(now,'yyyymmdd'),'.mat'];
+    save(file,'x');
+    
 catch
 
     senderror_report

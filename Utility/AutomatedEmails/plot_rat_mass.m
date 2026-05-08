@@ -90,8 +90,6 @@ end
 output.days      = DAYS;
 output.mass      = mass;
 output.anomalous = wrong;
-output.decline   = bad;
-output.stable    = good;
 output.tech      = tech;
 
 MM = []; MS = []; MD = []; MN = cell(0);

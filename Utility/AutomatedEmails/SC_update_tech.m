@@ -11,7 +11,7 @@ if strcmp(get(handles.run_toggle,'string'),'RUN'); return; end
 
 if strcmp(get(eval(['handles.',shiftltr,'lock_text']),'visible'),'on'); return; end
 
-currsched = bdata(['select ',shiftstring,' from ratinfo.tech_schedule where date="',datestr(now,'yyyy-mm-dd'),'"']);
+[currsched, ID] = bdata(['select ',shiftstring,', scheduleid from ratinfo.tech_schedule where date="',datestr(now,'yyyy-mm-dd'),'"']);
 currsched = currsched{1};
 
 if numel(currsched) > 1 && ~isempty(str2num(currsched(end-1:end))); return; end
@@ -26,8 +26,14 @@ allexp     = get(eval(['handles.',shiftltr,'tech_menu']),'string');
 
 currsched = [allexp{newtechnum},currsched];
 
-mym(bdata,['update ratinfo.tech_schedule set ',shiftstring,'="',currsched,'" where date="',datestr(now,'yyyy-mm-dd'),'"']);
+%mym(bdata,['update ratinfo.tech_schedule set ',shiftstring,'="',currsched,'" where date="',datestr(now,'yyyy-mm-dd'),'"']);
 
-
+if shift == 1
+    bdata('call ratinfo.append_tech_schedule_overnight("{S}","{Si}")',currsched,ID);
+elseif shift == 2
+    bdata('call ratinfo.append_tech_schedule_morning("{S}","{Si}")',currsched,ID);
+else
+    bdata('call ratinfo.append_tech_schedule_evening("{S}","{Si}")',currsched,ID);
+end
 
 
