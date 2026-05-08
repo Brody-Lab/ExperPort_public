@@ -83,6 +83,8 @@ try
     
     if strncmpi('pbups', protocol, 5) && isfield(protocol_data, 'violations'), % added 2011-02-03
         percent_violations = mean(protocol_data.violations);
+    elseif strncmpi('proanti3', protocol, 8) && isfield(protocol_data, 'violations'), % added 2023-10-18
+        percent_violations = mean(protocol_data.violations);
     else
         percent_violations=mean(isnan(hits));
     end;
