@@ -13,7 +13,7 @@ if get(handles.rat_button,'value') == 1
         techphone = phone(temp);
     end
     
-    for i = 1:length(handles.active);
+    for i = 1:length(handles.active)
         ratname = handles.active{i};
         
         if strcmp(state,'missing')
@@ -48,10 +48,10 @@ if get(handles.rat_button,'value') == 1
             if iscell(cm) && ~isempty(cm); cm = cm{1}; end
         
             if strcmp(state,'hematuria'); separate = 1;
-            else                          separate = 0;
+            else,                         separate = 0;
             end
             
-            if ~isempty(cm) && ~strcmp(state,'missing') && ~strcmp(state,'hematuria');
+            if ~isempty(cm) && ~strcmp(state,'missing') && ~strcmp(state,'hematuria')
                 answer2 = questdlg([ratname,' has ',cm,' as a cagemate. Do you want to separate them?'],...
                     '','Yes','No','Yes');
                 if strcmp(answer2,'Yes'); separate = 1; end
@@ -59,7 +59,7 @@ if get(handles.rat_button,'value') == 1
             
             if strcmp(state,'recovery') || strcmp(state,'freewater') || strcmp(state,'sick')
                 recovdays = inputdlg(['In how many days do you want ',ratname,' to return to training? (Leave blank if unknown or never)']);
-                recovdays = str2num(recovdays{1});
+                recovdays = str2num(recovdays{1}); %#ok<ST2NM>
             else
                 recovdays = [];
             end
@@ -77,11 +77,14 @@ if get(handles.rat_button,'value') == 1
                     if strcmp(answer2,'First')
 
                         ratID = bdata(['select internalID from ratinfo.rats where ratname="',ratname,'"']);
-                        mym(bdata,['update ratinfo.rats set cagemate="" where internalID="',num2str(ratID),'"']);
+                        %mym(bdata,['update ratinfo.rats set cagemate="" where internalID="',num2str(ratID),'"']);
+                        bdata('call ratinfo.update_cagemate("{S}","{Si}")','',ratID);
+                        
                         if ~isempty(cm)
                             mateID = bdata(['select internalID from ratinfo.rats where ratname="',cm,'"']);
                             if numel(mateID) == 1
-                                mym(bdata,['update ratinfo.rats set cagemate="" where internalID="',num2str(mateID),'"']);
+                                %mym(bdata,['update ratinfo.rats set cagemate="" where internalID="',num2str(mateID),'"']);
+                                bdata('call ratinfo.update_cagemate("{S}","{Si}")','',mateID);
                             end
                         end
                         
@@ -89,8 +92,9 @@ if get(handles.rat_button,'value') == 1
                             ratname,'" and date="',datestr(now+1,'yyyy-mm-dd'),'"']);
                         
                         for sid = 1:numel(sID)
-                            mym(bdata,['update ratinfo.schedule set instructions="',['Check Hematuria ',TI{sid}],...
-                                       '" where schedentryid=',num2str(sID(sid))]);
+                            %mym(bdata,['update ratinfo.schedule set instructions="',['Check Hematuria ',TI{sid}],...
+                            %           '" where schedentryid=',num2str(sID(sid))]);
+                            bdata('call ratinfo.update_schedule_instructions("{S}",{Si})',['Check Hematuria ',TI{sid}],sID(sid));       
                         end
                         
                         if isempty(sID)
@@ -103,19 +107,27 @@ if get(handles.rat_button,'value') == 1
                                 ratname,'" and date="',datestr(now+1,'yyyy-mm-dd'),'"']);
 
                             for sid = 1:numel(sID)
-                                mym(bdata,['update ratinfo.schedule set instructions="',['Check Hematuria ',TI{sid}],...
-                                           '" where schedentryid=',num2str(sID(sid))]);
+                                %mym(bdata,['update ratinfo.schedule set instructions="',['Check Hematuria ',TI{sid}],...
+                                %           '" where schedentryid=',num2str(sID(sid))]);
+                                bdata('call ratinfo.update_schedule_instructions("{S}",{Si})',['Check Hematuria ',TI{sid}],sID(sid));       
                             end
                         end
                         
-                    elseif strcmp(answer2,'Second');
+                    elseif strcmp(answer2,'Second')
                         msgbox(['If this is ',ratname,'s 2nd positive sign of hematuria please flag him as sick with',...
                                 ' the note indicating 2nd hematuria check.']);
                     end
                 %end
             
             elseif strcmp(state,'sick')
+                
                 put_rat_on_recovery(ratname,0,separate,recovdays);
+                
+                note = get(handles.note_edit,'string');
+                if isempty(strfind(note,'Flagged as Sick: ')) %#ok<STREMP>
+                    note = ['Flagged as Sick: ',note];
+                end
+                TN_submit(handles);
                 
                 %Sick notes should go to the tech supervisor.  There's no
                 %field for this in the contacts but they will likely be the
@@ -151,14 +163,19 @@ if get(handles.rat_button,'value') == 1
                             else                  rsvmsg = Scomments{end};
                             end
                             for x=1:numel(oldid)
-                                mym(bdata,'update ratinfo.schedule set ratname="", experimenter="", comments="{S}" where schedentryid="{S}"',...
-                                    rsvmsg,oldid(x));
+                                %mym(bdata,'update ratinfo.schedule set ratname="", experimenter="", comments="{S}" where schedentryid="{S}"',...
+                                %    rsvmsg,oldid(x));
+                                bdata('call ratinfo.update_schedule_ratname("{S}",{Si})','',oldid(x));
+                                bdata('call ratinfo.update_schedule_experimenter("{S}",{Si})','',oldid(x));
+                                bdata('call ratinfo.update_schedule_comments("{S}",{Si})',rsvmsg,oldid(x));
+                                
                             end
                             disp(['Rat ',ratname,' removed from the schedule, marked as reserved: Rig ',num2str(rig(x)),', Slot ',num2str(slot(x))]);
                         end
 
                         %Mark as dead
-                        mym(bdata,['update ratinfo.rats set extant=0, dateSac="',datestr(now,'yyyy-mm-dd'),'" where internalID="{S}"'],ratID);
+                        %mym(bdata,['update ratinfo.rats set extant=0, dateSac="',datestr(now,'yyyy-mm-dd'),'" where internalID="{S}"'],ratID);
+                        bdata('call ratinfo.flag_rat_dead("{S}","{Si}")',datestr(now,'yyyy-mm-dd'),ratID)
                         
                         for j = 1:numel(realexp)
                             message = [ratname,' was flagged as ',state,' by ',tech,' (',num2str(techphone)...
@@ -172,10 +189,12 @@ if get(handles.rat_button,'value') == 1
                             cm = bdata(['select cagemate from ratinfo.rats where internalID=',num2str(ratID)]);
                             if iscell(cm) && ~isempty(cm); cm = cm{1}; end
                             if ~isempty(cm)
-                                mym(bdata,'update ratinfo.rats set cagemate="" where internalID="{S}"',ratID);
+                                %mym(bdata,'update ratinfo.rats set cagemate="" where internalID="{S}"',ratID);
+                                bdata('call ratinfo.update_cagemate("{S}","{Si}")','',ratID);
                                 mateID = bdata(['select internalID from ratinfo.rats where ratname="',cm,'"']);
                                 if numel(mateID) == 1
-                                    mym(bdata,'update ratinfo.rats set cagemate="" where internalID="{S}"',mateID);
+                                    %mym(bdata,'update ratinfo.rats set cagemate="" where internalID="{S}"',mateID);
+                                    bdata('call ratinfo.update_cagemate("{S}","{Si}")','',mateID);
                                 end
                             end
                         end
@@ -237,8 +256,13 @@ if get(handles.rat_button,'value') == 1
                                 newnote(bad == 1) = '';
                                 
                                 
-                                mym(bdata,'update ratinfo.schedule set ratname="{S}", experimenter="{S}", comments="{S}", instructions="{S}" where schedentryid={S}',...
-                                    ratname,fakeexp,newnote,'Remove from free water',ID(j));
+                                %mym(bdata,'update ratinfo.schedule set ratname="{S}", experimenter="{S}", comments="{S}", instructions="{S}" where schedentryid={S}',...
+                                %    ratname,fakeexp,newnote,'Remove from free water',ID(j));
+                                bdata('call ratinfo.update_schedule_ratname("{S}",{Si})',ratname,ID(j));
+                                bdata('call ratinfo.update_schedule_experimenter("{S}",{Si})',fakeexp,ID(j));
+                                bdata('call ratinfo.update_schedule_comments("{S}",{Si})',newnote,ID(j));
+                                bdata('call ratinfo.update_schedule_instructions("{S}",{Si})','Remove from free water',ID(j));
+                                
                                 foundtomorrow = 1;
                             else
                                 msgbox(['Rig reserved for ',ratname,' is already scheduled for ',RS{j}]);
@@ -268,8 +292,12 @@ if get(handles.rat_button,'value') == 1
                                     end
                                     newnote(bad == 1) = '';
                                     
-                                    mym(bdata,'update ratinfo.schedule set ratname="{S}", experimenter="{S}", comments="{S}", instructions="{S}" where schedentryid={S}',...
-                                        ratname,fakeexp,newnote,'Remove from free water',ID(j));
+                                    %mym(bdata,'update ratinfo.schedule set ratname="{S}", experimenter="{S}", comments="{S}", instructions="{S}" where schedentryid={S}',...
+                                    %    ratname,fakeexp,newnote,'Remove from free water',ID(j));
+                                    bdata('call ratinfo.update_schedule_ratname("{S}",{Si})',ratname,ID(j));
+                                    bdata('call ratinfo.update_schedule_experimenter("{S}",{Si})',fakeexp,ID(j));
+                                    bdata('call ratinfo.update_schedule_comments("{S}",{Si})',newnote,ID(j));
+                                    bdata('call ratinfo.update_schedule_instructions("{S}",{Si})','Remove from free water',ID(j));
                                 end
                             end
                         else
@@ -280,7 +308,8 @@ if get(handles.rat_button,'value') == 1
                     if foundtomorrow == 1 && Recov(temp) == 1
                         answer4 = questdlg([ratname,' is flagged as recovering. Do you want to unflag?'],'','Yes','No','Yes');
                         if strcmp(answer4,'Yes')
-                            mym(bdata,'update ratinfo.rats set recovering=0 where internalID="{S}"',RID(temp));
+                            %mym(bdata,'update ratinfo.rats set recovering=0 where internalID="{S}"',RID(temp));
+                            bdata('call ratinfo.update_rat_recovery("{Si}","{Si}")',RID(temp),0);
                         end
                     end
                 end

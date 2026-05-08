@@ -22,7 +22,7 @@ function varargout = TechNotes(varargin)
 
 % Edit the above text to modify the response to help TechNotes
 
-% Last Modified by GUIDE v2.5 13-Jan-2016 14:10:08
+% Last Modified by GUIDE v2.5 03-Nov-2022 22:43:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -149,6 +149,8 @@ function rat_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 set(handles.submit_button,'enable','on');
 if get(hObject,'value') == 1
     handles = TN_listrats(handles);
+    set(handles.roomempty_button,'enable','off')
+    set(handles.pubempty_button, 'enable','off')
 else
     handles = TN_clear(handles);
 end
@@ -161,6 +163,8 @@ function rig_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 set(handles.submit_button,'enable','on');
 if get(hObject,'value') == 1
     handles = TN_listrigs(handles);
+    set(handles.roomempty_button,'enable','off')
+    set(handles.pubempty_button, 'enable','off')
 else
     handles = TN_clear(handles);
 end
@@ -173,6 +177,8 @@ function tower_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 set(handles.submit_button,'enable','on');
 if get(hObject,'value') == 1
     handles = TN_listtowers(handles);
+    set(handles.roomempty_button,'enable','off')
+    set(handles.pubempty_button, 'enable','off')
 else
     handles = TN_clear(handles);
 end
@@ -185,6 +191,8 @@ function session_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
 set(handles.submit_button,'enable','on');
 if get(hObject,'value') == 1
     handles = TN_listsessions(handles);
+    set(handles.roomempty_button,'enable','off')
+    set(handles.pubempty_button, 'enable','off')
 else
     handles = TN_clear(handles);
 end
@@ -198,6 +206,8 @@ function experimenter_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DE
 set(handles.submit_button,'enable','on');
 if get(hObject,'value') == 1
     handles = TN_listexperimenters(handles);
+    set(handles.roomempty_button,'enable','off')
+    set(handles.pubempty_button, 'enable','off')
 else
     handles = TN_clear(handles);
 end
@@ -211,9 +221,27 @@ set(handles.submit_button,'enable','on');
 if get(hObject,'value') == 1
     set(handles.exp_text,'string','EVERYONE');
     handles = TN_general(handles);
+    set(handles.roomempty_button,'enable','off')
+    set(handles.pubempty_button, 'enable','off')
 else
     set(handles.exp_text,'string','');
     handles = TN_clear(handles);
+end
+guidata(hObject,handles);
+
+
+% --- Executes on button press in room_button.
+function room_button_Callback(hObject, eventdata, handles) %#ok<INUSL,DEFNU>
+
+set(handles.submit_button,'enable','on');
+if get(hObject,'value') == 1
+    handles = TN_listrooms(handles);
+    set(handles.roomempty_button,'enable','on')
+    set(handles.pubempty_button, 'enable','on')
+else
+    handles = TN_clear(handles);
+    set(handles.roomempty_button,'enable','off')
+    set(handles.pubempty_button, 'enable','off')
 end
 guidata(hObject,handles);
 
@@ -363,3 +391,46 @@ TN_removetraining(handles,'sick');
 function hematuria_button_Callback(hObject, eventdata, handles)
 
 TN_removetraining(handles,'hematuria');
+
+
+
+
+
+% --- Executes on button press in roomempty_button.
+function roomempty_button_Callback(hObject, eventdata, handles) %#ok<DEFNU,INUSL>
+
+if isfield(handles,'active') && ~isempty(handles.active)
+    for i = 1:numel(handles.active)
+        answer = questdlg(['Are you certain no animals remain in ',handles.active{i}],'Confirm Room Empty','Yes','No','No');
+        if strcmp(answer,'Yes')
+            note = ['Room ',handles.active{i},', confirmed empty'];
+            set(handles.note_edit,'string',note);
+            TN_submit(handles);
+        end
+    end
+    
+else
+    msgbox('Please select a room first.');
+end
+guidata(hObject,handles);
+
+
+% --- Executes on button press in pubempty_button.
+function pubempty_button_Callback(hObject, eventdata, handles) %#ok<DEFNU,INUSL>
+
+if isfield(handles,'active') && ~isempty(handles.active)
+    for i = 1:numel(handles.active)
+        answer = questdlg(['Are you certain no animals remain in any pubs in ',handles.active{i}],'Confirm Pubs Empty','Yes','No','No');
+        if strcmp(answer,'Yes')
+            note = ['Pubs in ',handles.active{i},', confirmed empty'];
+            set(handles.note_edit,'string',note);
+            TN_submit(handles);
+        end
+    end
+    
+else
+    msgbox('Please select a room first.');
+end
+guidata(hObject,handles);
+
+

@@ -6,7 +6,10 @@ set(handles.rat_button,'value',0);
 set(handles.rig_button,'value',0);
 set(handles.tower_button,'value',0);
 set(handles.session_button,'value',0);
+%set(handles.experimenter_button,'value',0);
 set(handles.general_button,'value',0);
+set(handles.room_button,'value',0);
+
 
 [contacts ratR] = bdata('select contact, ratname from ratinfo.rats where extant = 1');
 [EX EM] = bdata('select experimenter, email from ratinfo.contacts');

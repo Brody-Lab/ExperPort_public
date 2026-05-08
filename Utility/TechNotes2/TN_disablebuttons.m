@@ -9,6 +9,9 @@ if strcmp(group,'all')
     set(handles.session_button,     'enable','off');
     set(handles.experimenter_button,'enable','off');
     set(handles.general_button,     'enable','off');
+    set(handles.room_button,        'enable','off');
+    set(handles.roomempty_button,   'enable','off');
+    set(handles.pubempty_button,    'enable','off');
 end
 
 if strcmp(group,'all') || strcmp(group,'management')

@@ -77,6 +77,22 @@ elseif get(handles.experimenter_button,'value') == 1
             dstr,tstr,EXP,initials,note);
     end
     
+elseif get(handles.room_button,'value') == 1
+    %modify note to indicate the room number then submit
+    
+    raw_note = note;
+    if ~isempty(handles.active)
+        for i = 1:numel(handles.active)
+            if isempty(strfind(raw_note,handles.active))
+                note = [handles.active{i},' ',raw_note];
+            else
+                note = raw_note;
+            end
+            bdata('INSERT INTO ratinfo.technotes (datestr, timestr, techinitials, note) values ("{S}","{S}","{S}","{S}")',...
+                dstr,tstr,initials,note);
+        end
+    end
+    
 else
     bdata('INSERT INTO ratinfo.technotes (datestr, timestr, techinitials, note) values ("{S}","{S}","{S}","{S}")',...
         dstr,tstr,initials,note);

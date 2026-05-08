@@ -49,12 +49,14 @@ if get(handles.rat_button,'value') == 1
         if strcmp(answer,'Yes')
             ID1 = bdata(['select internalID from ratinfo.rats where ratname="',handles.active{1},'"']);
             if numel(ID1) == 1
-                mym(bdata,'update ratinfo.rats set cagemate="" where internalID="{S}"',ID1);
+                %mym(bdata,'update ratinfo.rats set cagemate="" where internalID="{S}"',ID1);
+                bdata('call ratinfo.update_cagemate("{S}","{Si}")','',ID1);
             end
 
             ID2 = bdata(['select internalID from ratinfo.rats where ratname="',handles.active{2},'"']);
             if numel(ID2) == 1
-                mym(bdata,'update ratinfo.rats set cagemate="" where internalID="{S}"',ID2);
+                %mym(bdata,'update ratinfo.rats set cagemate="" where internalID="{S}"',ID2);
+                bdata('call ratinfo.update_cagemate("{S}","{Si}")','',ID2);
             end
 
             msgbox([handles.active{1},' and ',handles.active{2},' split up.']);
@@ -66,12 +68,14 @@ if get(handles.rat_button,'value') == 1
         if strcmp(answer,'Yes')
             ID1 = bdata(['select internalID from ratinfo.rats where ratname="',handles.active{1},'"']);
             if numel(ID1) == 1
-                mym(bdata,['update ratinfo.rats set cagemate="',handles.active{2},'" where internalID="{S}"'],ID1);
+                %mym(bdata,['update ratinfo.rats set cagemate="',handles.active{2},'" where internalID="{S}"'],ID1);
+                bdata('call ratinfo.update_cagemate("{S}","{Si}")',handles.active{2},ID1);
             end
 
             ID2 = bdata(['select internalID from ratinfo.rats where ratname="',handles.active{2},'"']);
             if numel(ID2) == 1
-                mym(bdata,['update ratinfo.rats set cagemate="',handles.active{1},'" where internalID="{S}"'],ID2);
+                %mym(bdata,['update ratinfo.rats set cagemate="',handles.active{1},'" where internalID="{S}"'],ID2);
+                bdata('call ratinfo.update_cagemate("{S}","{Si}")',handles.active{1},ID2);
             end
 
             msgbox([handles.active{1},' and ',handles.active{2},' combined as cagemates.']);
