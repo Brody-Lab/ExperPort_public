@@ -1,4 +1,5 @@
 % [handles, idx_within_list] = get_sphandle({'name', '.*',}, {'fullname', '.*'}, ...
+%        {'funcowner', '.*'}, ...
 %        {'owner', '.*'}, {'handlelist', {}}, {'first', 0})    Find a SoloParamHandle.
 %
 % For clean code, IT IS NOT RECOMMENDED YOU USE GET_SPHANDLE IN YOUR CODE.
@@ -30,6 +31,15 @@
 %              fullname, use '^myfunction_nombre$' (see help regexp.m).
 %              Default value of this optional param is '.*', i.e., all
 %              fullnames.
+%
+% 'funcowner'  A string that will be matched (using regexp.m) to the function of
+%              the SoloParamHandle. Typically the function owner is the mfile 
+%               that created the SoloParamHandle-- e.g., if a
+%              SoloParamHandle with name 'nombre' was created in function
+%              @myobject/myfunction.m, then the function owner is 'myfunction'. Thus
+%              the strings 'myfun' and 'unc' and 'tion' will all match it.
+%              To match the exact ofunction wner string, use '^myfunction$' (see help
+%              regexp.m). Default value of this optional param is '.*',
 %
 % 'owner'      A string that will be matched (using regexp.m) to the owner of
 %              the SoloParamHandle. Typically the owner is the class of the
@@ -94,6 +104,7 @@ function [handles, idx_within_list] = get_sphandle(varargin)
    global private_soloparam_list;
 
    pairs = { ...
+       'funcowner'    '.*'   ; ...
        'owner'        '.*'   ; ...
        'name'         '.*'   ; ...
        'fullname'     '.*'   ; ...
@@ -108,8 +119,9 @@ function [handles, idx_within_list] = get_sphandle(varargin)
    
    guys = zeros(size(psl)); idx_within_list = [];
    
-   % Moved these 3 strcmp calls out of the loop.  Saves some time if ps1 is large
+   % Moved these 4 strcmp calls out of the loop.  Saves some time if ps1 is large
    
+   def_funcowner=strcmp(funcowner, '.*');
    def_owner=strcmp(owner, '.*');
    def_name=strcmp(name,  '.*');
    def_fullname=strcmp(fullname, '.*');
@@ -117,9 +129,10 @@ function [handles, idx_within_list] = get_sphandle(varargin)
    for i=1:length(psl),
       % if ~isempty(psl{i})  &&  ... 
       if  (isa(psl{i}, 'SoloParam') || isa(psl{i}, 'SoloParamHandle')) &&  ...
-             (def_owner || ~isempty(regexp(get_owner(psl{i}), owner)))  &&  ...
-             (def_name || ~isempty(regexp(get_name(psl{i}),   name )))  &&  ...
-             (def_fullname || ~isempty(regexp(get_fullname(psl{i}), fullname))),
+             (def_funcowner || ~isempty(regexp(get_funcowner(psl{i}), funcowner, 'once')))  &&  ...
+             (def_owner     || ~isempty(regexp(get_owner(psl{i}), owner, 'once')))  &&  ...
+             (def_name      || ~isempty(regexp(get_name(psl{i}),   name, 'once' )))  &&  ...
+             (def_fullname  || ~isempty(regexp(get_fullname(psl{i}), fullname, 'once'))),
          
          
          

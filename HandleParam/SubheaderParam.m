@@ -9,6 +9,9 @@ function [] = SubheaderParam(obj, parname, parval, x, y, varargin)
    else   error('obj must be an object or the string ''base''');
    end;
    
+   width = []; height = []; % needed in newer versions of Matlab so 
+   % functions width() and height() do not collide with optional args below
+
    pairs = {   ...
      'param_owner',        param_owner            ; ...
      'param_funcowner',    determine_fullfuncname     ; ...

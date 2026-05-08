@@ -70,6 +70,12 @@
 %              therefore nt completed). If this parameter is passed as 1,
 %              the last trial is dropped from the history.
 %
+% `return_n_done_trials` Either 0 or 1, by deault 0. This is a more
+%              specific way to drop any extra trials that may be in the
+%              history of a variable so that what is returned is
+%              n_done_trials long. This is especially helpful in a case
+%              where a crash occured that killed a session.
+%
 %
 % RETURNS:
 % --------
@@ -102,6 +108,7 @@
 %
 
 % Written by Carlos Brody 2009
+% Edited by Jess Breda 2023
 
 function [history] = get_history(varargin)
 
@@ -113,12 +120,13 @@ else
 end;
 
 pairs = { ...
-  'owner'           '.*'   ; ...
-  'fullname'        '.*'   ; ...
-  'handlelist'       {}    ; ...
-  'nth'              []    ; ...
-  'name'             name_default   ; ...
-  'drop_last_trial'  0     ; ...
+  'owner'                '.*'   ; ...
+  'fullname'             '.*'   ; ...
+  'handlelist'           {}    ; ...
+  'nth'                  []    ; ...
+  'name'                 name_default   ; ...
+  'drop_last_trial'      0     ; ...
+  'return_n_done_trials' 0 ;...
 }; parseargs(varargin, pairs);
    
 sps = get_sphandle('owner', owner, 'name', name,  'fullname', fullname, 'handlelist', handlelist);
@@ -154,3 +162,6 @@ catch %#ok<CTCH>
 end;
 
 if drop_last_trial, history = history(1:end-1); end;
+
+if return_n_done_trials, history = history(1:get_value('n_done_trials')); end;
+    

@@ -38,6 +38,10 @@
 %                    If provided, settings path is of the form:
 %                      .../SoloData/Settings/experimentername/ratname/
 %                    The former is old behavior, the latter new.
+%
+% fullfilename       Default, empty. If empty a file is chosen as before.
+%                    If non-empty this file name is used. This must be a
+%                    full path and file name;
 
 function varargout = save_solouiparamvalues(ratname, varargin)
  global Solo_datadir;
@@ -50,6 +54,7 @@ pairs = { ...
     'tomorrow'         0 ; ...
     'owner'           '' ; ...
     'experimenter'    '' ; ... % <~> added for new directory hierarchy
+    'fullfilename'    '' ; ...
     };
 parseargs(varargin, pairs);
 
@@ -168,7 +173,7 @@ else
     end;
 
     rn = [experimenter_ ratname]; % <~> added experimenter_
-    if interactive,
+    if interactive && isempty(fullfilename),
        [fname, pname] = ...
            uiputfile({['*' owner '*' rn '*.mat'], ...
                       [owner ' ' rn ' files (' owner '*' rn '*.mat)'] ; ...
@@ -181,15 +186,25 @@ else
     end;
 end;
 
-save([pname fname], 'saved', 'saved_autoset', 'fig_position');
-
+if isempty(fullfilename)
+    save([pname fname], 'saved', 'saved_autoset', 'fig_position');
+else
+    save(fullfilename,  'saved', 'saved_autoset', 'fig_position');
+end
 if nargout>=1
-    varargout{1}=[pname fname];
+    if isempty(fullfilename)
+        varargout{1}=[pname fname];
+    else
+        varargout{1}=fullfilename;
+    end
 end
 
-% Make sure it is a .mat extension:
-[path, name, ext] = fileparts([pname fname]); 
-if ~strcmp('.mat', ext), fname = [name '.mat']; end;
-% Then add and commit if necessary:
-if commit, add_and_commit([path filesep fname]); end;
-
+if isempty(fullfilename)
+    % Make sure it is a .mat extension:
+    [path, name, ext] = fileparts([pname fname]); 
+    if ~strcmp('.mat', ext), fname = [name '.mat']; end;
+    % Then add and commit if necessary:
+    if commit, add_and_commit([path filesep fname]); end;
+else
+    if commit, add_and_commit(fullfilename); end;
+end
