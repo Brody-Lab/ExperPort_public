@@ -88,6 +88,8 @@ function [x, y] = CerebroSection(obj, action, varargin)
                 'closerequestfcn', [mfilename '(' class(obj) ', ''close_standalone''' ');'], 'MenuBar', 'none', ...
                 'NumberTitle', 'off', 'Name', 'CerebroSection')), 'saveable', 0);
             
+            SoloParamHandle(obj, 'PingDispatcher', 'value', 0);
+            
             feval(mfilename,obj,'make_gui_elements');
             GetSoloFunctionArgs(obj);
             
@@ -106,6 +108,7 @@ function [x, y] = CerebroSection(obj, action, varargin)
               error('Need at least two arguments, x and y position, to initialize %s', mfilename);
             end
             x = varargin{1}; y = varargin{2};
+            SoloParamHandle(obj, 'PingDispatcher', 'value', 1);
             SoloParamHandle(obj, 'my_gui_info', 'value', [x y double(gcf)]);
             ToggleParam(obj, 'cerebro_show', 0, x, y, ...
                'OnString', 'Cerebro window Showing', ...
@@ -381,6 +384,15 @@ function [x, y] = CerebroSection(obj, action, varargin)
         %% is connected
         case 'is_connected'
             x = exist('base_station','var') && isa(value(base_station),'serial') && isvalid(value(base_station));
+        
+        
+        %% is cerebro connected
+        case 'is_cerebro_connected'    
+        x = 0;
+        if feval(mfilename,obj,'is_connected')
+            x = ~isempty(value(cerebro_version)) && ~isempty(value(battery_power));
+        end
+        
             
         %% lock, i.e. the GUI if not cerebro is available
         case 'lock'
@@ -406,7 +418,7 @@ function [x, y] = CerebroSection(obj, action, varargin)
                         disp('Bytes Available but none read.');
                     end
                 end
-
+                for i=1:numel(x); disp(x{i}); end; disp('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
                 warning('on','MATLAB:serial:fscanf:unsuccessfulRead');
                 parsed_message = '';
                 
@@ -512,8 +524,11 @@ function [x, y] = CerebroSection(obj, action, varargin)
                     sent_message_list.value = [value(sent_message_list);[varargin{1},' NOT SENT LOW BATTERY']];
                     set(value(sent_messages_box),'string',value(sent_message_list),'ListboxTop',numel(value(sent_message_list))); 
                 else
-
-                    sent_message_list.value = [value(sent_message_list);varargin{1}];
+                    if value(PingDispatcher) == 1
+                        sent_message_list.value = [value(sent_message_list);[varargin{1},'   at ',num2str(dispatcher('get_time')),'s']];
+                    else
+                        sent_message_list.value = [value(sent_message_list);[varargin{1},'   at ',datestr(now,'HH:MM:SS')]];
+                    end
                     set(value(sent_messages_box),'string',value(sent_message_list),'ListboxTop',numel(value(sent_message_list)));      
 
                     cerebro2_send(value(base_station),varargin{1});
@@ -627,7 +642,11 @@ function [x, y] = CerebroSection(obj, action, varargin)
             if feval(mfilename,obj,'is_connected')
                 if exist('n_started_trials','var') && exist('local_n_started_trials','var')
                     if n_started_trials>local_n_started_trials
-                        feval(mfilename,obj,'insert_trial_header',['Trial ',num2str(n_started_trials),':']); 
+                        if value(PingDispatcher) == 1
+                            feval(mfilename,obj,'insert_trial_header',['Trial ',num2str(n_started_trials),': ',num2str(dispatcher('get_time')),'s  ',datestr(now,'HH:MM:SS')]);
+                        else
+                            feval(mfilename,obj,'insert_trial_header',['Trial ',num2str(n_started_trials),': ',datestr(now,'HH:MM:SS')]);
+                        end
                         local_n_started_trials.value=n_started_trials;
                     end
                 end
