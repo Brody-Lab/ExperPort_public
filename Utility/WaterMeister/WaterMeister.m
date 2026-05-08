@@ -22,7 +22,7 @@ function varargout = WaterMeister(varargin)
 
 % Edit the above text to modify the response to help WaterMeister
 
-% Last Modified by GUIDE v2.5 05-Mar-2015 12:22:44
+% Last Modified by GUIDE v2.5 26-Jul-2021 13:44:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -323,6 +323,7 @@ if get(handles.startstop_toggle,'value') == 1
     set(handles.startstop_toggle,'fontsize',calcfontsize(20,handles),'BackgroundColor',[1 1 1],'string','Wait...','enable','off');
     pause(1);
     
+    citricacid = get(handles.watertype_toggle,'value');
     if S < 10
         handles.start(S) = 1;
 
@@ -369,8 +370,12 @@ if get(handles.startstop_toggle,'value') == 1
             if strcmp(handles.rats{r},''); continue; end
             set(handles.startstop_toggle,'string',handles.rats{r}); pause(0.01);
             
-            bdata('INSERT INTO ratinfo.water (date, rat, tech, starttime, stoptime) values ("{S}","{S}","{S}","{S}","{S}")',...
-                datestr(st,'yyyy-mm-dd'),handles.rats{r},initials,datestr(st,'HH:MM:SS'),datestr(st,'HH:MM:SS'));
+            bdata(['insert into ratinfo.water set date="',     datestr(st,'yyyy-mm-dd'),...
+                                              '", rat="',      handles.rats{r},...
+                                              '", tech="',     initials,...
+                                              '", starttime="',datestr(st,'HH:MM:SS'),...
+                                              '", stoptime="', datestr(st,'HH:MM:SS'),...
+                                              '", citricacid=',num2str(citricacid)]);
             pause(0.01);
 
             %Here we check that the entries are going in
@@ -404,8 +409,10 @@ if get(handles.startstop_toggle,'value') == 1
             end
         end
             
-        answer = questdlg('Do you want to confirm for TODAY ONLY?','','Yes','No','Yes');
-        if strcmp(answer,'Yes')
+        answer = questdlg({'Do you want to confirm for TODAY ONLY,','or do you want confirmation to ROLLOVER,',...
+            'like before a lab shutdown?'},'','Today Only','Shutdown Rollover','Today Only');
+
+        if strcmp(answer,'Today Only')
             %This sets the stop time for today at a minute before midnight,
             %meaning rats on this list got water all day.  Answering no
             %leaves the stop time equal to the start time.  Any such
@@ -756,19 +763,11 @@ guidata(hObject,handles);
 
 
 
+% --- Executes on button press in watertype_toggle.
+function watertype_toggle_Callback(hObject, eventdata, handles)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if get(handles.watertype_toggle,'value') == 0
+    set(handles.watertype_toggle,'string','Plain','fontsize',16,'backgroundcolor',[0.941 0.941 0.941],'foregroundcolor',[0,0,0])
+else
+    set(handles.watertype_toggle,'string','CitricAcid','fontsize',12,'backgroundcolor',[0.8 0.7 0.2])
+end

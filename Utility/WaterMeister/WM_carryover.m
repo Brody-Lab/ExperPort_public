@@ -42,10 +42,16 @@ try
                     '", ratname="',uR{i},'", tech="FW", timeval="',datestr(st,'HH:MM:SS'),'"']); 
             end
             
+            %Commenting out this section 2021-07-29 CK
+            %This way a free water animal can easily be weighed if someone
+            %wants to do it without having to delete the 0g. The 0g FW will
+            %still be added at the end of the day
+            %
             %Since the free water is continuing to tomorrow let's also give
             %him a 0g FW weight entry for tomorrow
-            bdata(['insert into ratinfo.mass set mass=0, date="',datestr(st+1,'yyyy-mm-dd'),...
-                '", ratname="',uR{i},'", tech="FW", timeval="00:01:00"']);
+            %bdata(['insert into ratinfo.mass set mass=0, date="',datestr(st+1,'yyyy-mm-dd'),...
+            %    '", ratname="',uR{i},'", tech="FW", timeval="00:01:00"']);
+            
             
         end
     end

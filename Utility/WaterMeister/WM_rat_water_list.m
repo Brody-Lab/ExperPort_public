@@ -12,7 +12,12 @@ if nargin < 6;
 end
 
 [RatSch,rigs,timeslots] = bdata(['select ratname, rig, timeslot from ratinfo.schedule where date="',day,'"']);
-[RatReg,forcedeps,forcefrees,cagemates] = bdata(['select ratname, forcedepwater, forcefreewater, cagemate from ratinfo.rats where extant=1 and israt=',num2str(ratrig)]);
+if ratrig < 2
+    [RatReg,forcedeps,forcefrees,cagemates] = bdata(['select ratname, forcedepwater, forcefreewater, cagemate from ratinfo.rats where extant=1 and israt=',num2str(ratrig)]);
+else
+    [RatReg,forcedeps,forcefrees,cagemates] = bdata('select ratname, forcedepwater, forcefreewater, cagemate from ratinfo.rats where extant=1');
+end
+    
 CompRats = bdata(['select ratname from ratinfo.rigwater where dateval="',datestr(now,'yyyy-mm-dd'),'" and complete=1']);
     
 %Remove rats from the schedule and completed lists depending on if it's a
