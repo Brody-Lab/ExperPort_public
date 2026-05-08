@@ -37,6 +37,9 @@ try
     
     if ~exist(bpath,'dir')
         %no such folder exists on bucket to copy a file from
+        disp(bpath)
+        disp('Directory does not exist...')
+        disp('No file copied')
         return;
     end
 
@@ -59,6 +62,17 @@ try
     end
 
     recent = find(dt == nanmax(dt));
+    
+    if nargin == 4
+        p = bSettings('get','GENERAL','Main_Data_Directory');
+        pexp = [p,'\',filetype,'\',expname];
+        if ~exist(pexp,'dir')
+            mkdir(p,expname);
+        end
+        if ~exist(pname,'dir')
+            mkdir(pexp,ratname);
+        end
+    end
     
     for i = 1:numel(recent)
         if ~exist([pname,filesep,x(recent(i)).name],'file')
