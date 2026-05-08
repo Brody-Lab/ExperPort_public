@@ -152,6 +152,12 @@
 %              'Lout'    left   poke beam has just been reestablished
 %              'Rin'     right  poke beam has just been broken
 %              'Rout'    right  poke beam has just been reestablished
+%              'Chi'     center poke beam is already broken upon state entry
+%              'Clo'     center poke beam is already established upon state entry
+%              'Lhi'     left poke beam is already broken upon state entry
+%              'Llo'     left poke beam is already established upon state entry
+%              'Rhi'     right poke beam is already broken upon state entry
+%              'Rlo'     right poke beam is already established upon state entry
 %              'null'    no actual event matches this string; it has no effect.
 %             In addition, every scheduled wave registered creates two new
 %             events that can be used in the input_to_statechange cell.

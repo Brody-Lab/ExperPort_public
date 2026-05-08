@@ -68,7 +68,7 @@ for j=1:numel(spec),
         end
     end
     if found_duplicate == 1
-        warning(['Happening ',spec(j).name,' not added since one already exists with that name.']);
+        disp(['Happening ',spec(j).name,' not added since one already exists with that name.']);
     else
         sma.happSpec(numel(sma.happSpec)+1).name = spec(j).name;
         sma.happSpec(end).detectorFunctionName   = spec(j).detectorFunctionName;

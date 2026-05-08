@@ -225,6 +225,13 @@ function [sma] = StateMachineAssembler(varargin)
       end;
    end;
    
+   try
+       %make the first state one that flashes the sync LED connected to center1water
+       sma = add_sync_flash_state(sma);
+   catch
+       disp('ERROR adding sync flash state');
+   end
+   
       try
         if add_trialnum_indicator > 0 
             if bSettings('get','RIGS','bpod') == 1 
