@@ -76,7 +76,7 @@ void setup() {
   delay(10);
   pinMode(LED, OUTPUT);
 
-  EEPROM.update(CHANNEL_ADDRESS, 98); /*define channel address here 99*/
+  EEPROM.update(CHANNEL_ADDRESS, 99); /*define channel address here 99*/
   delay(5000);
 
   EEPROM.get(CHANNEL_ADDRESS,netID);
@@ -421,6 +421,7 @@ void printDiodeStats(){
 }
 
 void sendWaveformUpdate(){
+  printTime();
   newWaveform.startDelay = valsFromParse[0];
   newWaveform.onTime = valsFromParse[1];
   newWaveform.offTime = valsFromParse[2];
@@ -439,6 +440,7 @@ void sendWaveformUpdate(){
 }
 
 void sendDiodePowerUpdate(){
+  printTime();
   newDiodePowers.lSetPoint = valsFromParse[0];
   newDiodePowers.rSetPoint = valsFromParse[1];
   newDiodePowers.msgCount = msgCount++;
@@ -453,6 +455,7 @@ void sendDiodePowerUpdate(){
 }
 
 void sendFullUpdate(){
+  Serial1.print("Start "); printTime(); newline();
   newFullData.lSetPoint = valsFromParse[0]; 
   newFullData.rSetPoint = valsFromParse[1];
   newFullData.startDelay = valsFromParse[2];
@@ -474,15 +477,50 @@ void sendFullUpdate(){
   newWaveform.rampDur = valsFromParse[6];
   newWaveform.msgCount = msgCount++;
   printWaveform(newWaveform,false);
-  
-  if (radio.sendWithRetry(CEREBRO, (const void*)(&newFullData), sizeof(newFullData))){
-    currentFullData = newFullData;
-    ignoreFilter = true;
+  Serial1.print("Finish "); printTime(); newline();
+
+  uint32_t StartTransTime;
+  uint8_t  numretries = 10; 
+  uint32_t retryWaitTime = 500;
+  bool     datareceived = false;
+  uint32_t transTime;
+  uint32_t remainTime;
+  uint8_t  retrycount = 0;
+
+  Serial1.print("Start Transmission "); printTime(); newline();
+  for (uint8_t i = 0; i <= numretries; i++){
+    if (!datareceived){
+      StartTransTime = millis();
+      Serial1.print("Sending "); printTime(); newline();
+      if (radio.sendWithRetry(CEREBRO, (const void*)(&newFullData), sizeof(newFullData))){
+        datareceived = true; 
+        Serial1.print("Receive "); printTime(); newline();
+        currentFullData = newFullData;   
+        ignoreFilter = true;  
+      }
+      else{
+        Serial1.print("Retry "); printTime(); newline();
+        retrycount++;
+        transTime  = millis() - StartTransTime;
+        
+        if (transTime < retryWaitTime){
+          remainTime = retryWaitTime - transTime;
+          delay(remainTime);
+        }
+        else{
+          delay(10);
+        }
+      }
+    }
+  }
+  if (!datareceived){
+    Serial1.print("Fail "); printTime(); newline();  
+    Serial1.print("*X&FullData Update Failed\n");
   }
   else{
-    Serial1.print("*X&FullData Update Failed\n");
-    carriagereturn(); newline();
+    Serial1.print(retrycount); Serial1.print(" Retries "); printTime();
   }
+  carriagereturn(); newline();
 }
 
 void requestMissed(){
