@@ -225,7 +225,7 @@ try
                 'FontSize',6,...
                 'parent',hndl_uipanelSettings);             
 
-            MenuParam(obj,'xVal',{'gamma','bupDiff'},'gamma',1,1,...
+            MenuParam(obj,'xVal',{'gamma','bupDiff','log_click_ratio','rl_prob_diff'},'bupDiff',1,1,...
                 'label','X Value',...
                 'TooltipString','quantity on the abscissa');
             
@@ -242,7 +242,7 @@ try
             
             MenuParam(obj,'normalization',{'none','totalBups'},'none',1,1,...
                 'label','Normalization',...
-                'TooltipString','normalization of bup diff');
+                'TooltipString','normalization of bupDiff, does nothing for the other options for xval');
             
             set(get_lhandle(normalization),...
                 'units','normalized',...
@@ -256,7 +256,7 @@ try
                 'parent',hndl_uipanelSettings);   
             
             
-            MenuParam(obj,'nPsychBins',{1,2,4,8,12,Inf},6,1,1,...
+            MenuParam(obj,'nPsychBins',{1,2,3,4,5,6,7,8,9,10,11,12,Inf},7,1,1,...
                 'label','npsychbins',...
                 'TooltipString','number of x-axis bins');
             
@@ -492,10 +492,25 @@ try
                     'removeViolations',~logical(value(plotViolations)),...
                     'legend',false);                
                end
+               if ~value(plotViolations)
+                enable(biasRate);
+                enable(lapse);
+                enable(violationRate);
+                enable(percentCorrect);                   
                 biasRate.value = [num2str(round(pbups_psych_data.bias(1)*100)) ' % right bias'];
                 lapse.value = [num2str(round(pbups_psych_data.lapse(1)*100)) ' % lapse rate'];
-                violationRate.value = sprintf('%g%% violations (%g/%g)', round(100*sum(protocol_data.pd{1}.violations)./length(protocol_data.pd{1}.violations)), sum(protocol_data.pd{1}.violations),length(protocol_data.pd{1}.violations)); 
-                percentCorrect.value = [num2str(round(pbups_psych_data.percentCorrect*100/(1-value(violationRate)))), '% correct (',num2str(round(pbups_psych_data.percentCorrect*length(pbups_psych_data.choices))) ,'/',num2str(length(pbups_psych_data.choices) )];
+                violationRate.value = sprintf('%g%% violations', round(100*pbups_psych_data.violationRate)); 
+                percentCorrect.value = [num2str(round(pbups_psych_data.percentCorrect*100)), '% correct (',num2str(round(pbups_psych_data.percentCorrect*length(pbups_psych_data.choices))) ,'/',num2str(length(pbups_psych_data.choices) )];
+               else
+                biasRate.value = NaN;
+                lapse.value = NaN;
+                violationRate.value = NaN; 
+                percentCorrect.value = NaN;
+                disable(biasRate);
+                disable(lapse);
+                disable(violationRate);
+                disable(percentCorrect);
+               end
                 
                     
                 legend_handle = findobj(gcf, 'tag', 'legend');
