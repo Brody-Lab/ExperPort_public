@@ -2,7 +2,7 @@
 ----------------------------------------------------------------------------
 
 This file is part of the Sanworks Bpod repository
-Copyright (C) 2018 Sanworks LLC, Stony Brook, New York, USA
+Copyright (C) 2021 Sanworks LLC, Stony Brook, New York, USA
 
 ----------------------------------------------------------------------------
 
@@ -37,6 +37,9 @@ classdef BpodClientObject < handle
         CurrentEventTimestamps
         nUnreadEvents
         nTotalEvents
+        EventTransBlock
+        TransBlockCounter
+        LastTransBlock
         TrialStartTimestamp
         MaxEvents = 10000;
         TimeScaleFactor
@@ -172,6 +175,8 @@ classdef BpodClientObject < handle
             obj.usingHappenings = 0;
             obj.isPaused = 0;
             obj.TimeScaleFactor = (BpodSystem.HW.CyclePeriod/1000000);
+            obj.TransBlockCounter = 1;
+            obj.LastTransBlock = 0;
         end
         function connect(obj)
             % Already connected, do nothing
@@ -271,9 +276,15 @@ classdef BpodClientObject < handle
                                 if obj.usePsychToolbox
                                     currentTime = obj.LastEventTime+(GetSecs-obj.LastEventTime_MATLAB);
                                 else
-                                    currentTime = obj.LastEventTime+((now-obj.LastEventTime_MATLAB)*100000);
+                                    currentTime = obj.LastEventTime+((now-obj.LastEventTime_MATLAB)*86400);
                                 end
                                 obj.ReplyBuffer = num2str(currentTime);
+                            case 'GET LAST EVENT TIME'
+                                obj.ReplyBuffer = num2str(obj.LastEventTime);
+                            case 'GET LAST EVENT TIME MATLAB'
+                                obj.ReplyBuffer = num2str(obj.LastEventTime_MATLAB);    
+                            case 'GET TRIAL START TIME'
+                                obj.ReplyBuffer = num2str(obj.TrialStartTimestamp);    
                             case 'USE HAPPENINGS'
                                 obj.usingHappenings = 1;
                             case 'DO NOT USE HAPPENINGS'
@@ -284,19 +295,31 @@ classdef BpodClientObject < handle
                             case 'HALT'
                                 BpodSystem.SerialPort.write(['$' 0], 'uint8');
                                 obj.isPaused = 1;
+                            case 'FORCE TRIAL COMPLETE'
+                                obj.TrialDoneFlag = 1;
+                                obj.NewSMLoaded = 1; % Flag to add trial init states on next call to GET_Events2
+                                obj.nTrialsCompleted = obj.nTrialsCompleted + 1;
                             case 'RUN'
                                 if obj.isPaused == 0
                                     BpodSystem.SerialPort.write('R', 'uint8'); % Send the code to run the loaded matrix (character "R" for Run)
                                     if BpodSystem.Status.NewStateMachineSent % Read confirmation byte = successful state machine transmission
-                                        SMA_Confirmed = BpodSystem.SerialPort.read(1, 'uint8');
+                                        SMA_Confirmed = BpodSystem.SerialPort.read(1, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = SMA_Confirmed;
                                         if isempty(SMA_Confirmed) 
+                                            try
+                                                file = which('runrats_datalog_temp.txt');
+                                                update_logfile(file,'Error: The last state machine sent was not acknowledged by the Bpod device.');
+                                            end
                                             error('Error: The last state machine sent was not acknowledged by the Bpod device.');
                                         elseif SMA_Confirmed ~= 1
+                                            try
+                                                file = which('runrats_datalog_temp.txt');
+                                                update_logfile(file,'Error: The last state machine sent was not acknowledged by the Bpod device.');
+                                            end
                                             error('Error: The last state machine sent was not acknowledged by the Bpod device.');
                                         end
                                         BpodSystem.Status.NewStateMachineSent = 0;
                                     end
-                                    TrialStartTimestampBytes = BpodSystem.SerialPort.read(8, 'uint8');
+                                    TrialStartTimestampBytes = BpodSystem.SerialPort.read(8, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = TrialStartTimestampBytes;
                                     obj.TrialStartTimestamp = double(typecast(TrialStartTimestampBytes, 'uint64'))/1000000; % Start-time of the trial in microseconds (compensated for 32-bit clock rollover)
                                     BpodSystem.StateMatrix = BpodSystem.StateMatrixSent;
                                     BpodSystem.Status.LastStateCode = 0;
@@ -323,7 +346,7 @@ classdef BpodClientObject < handle
                                 nBytesAvailable = BpodSystem.SerialPort.bytesAvailable;
                                 if (obj.TrialDoneFlag == 1) && (nBytesAvailable > 0)
                                     if (BpodSystem.Status.NewStateMachineSent == 1)
-                                        SMconfirmed = BpodSystem.SerialPort.read(1, 'uint8');
+                                        SMconfirmed = BpodSystem.SerialPort.read(1, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = SMconfirmed;
                                         if SMconfirmed ~= 1
                                             error('Error: a state machine sent to Bpod was not confirmed.')
                                         end
@@ -331,28 +354,32 @@ classdef BpodClientObject < handle
                                         nBytesAvailable = BpodSystem.SerialPort.bytesAvailable;
                                     end
                                     if nBytesAvailable > 7
-                                        TrialStartTimestampBytes = BpodSystem.SerialPort.read(8, 'uint8');
+                                        TrialStartTimestampBytes = BpodSystem.SerialPort.read(8, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = TrialStartTimestampBytes;
                                         obj.TrialStartTimestamp = double(typecast(TrialStartTimestampBytes, 'uint64'))/1000000; % Start-time of the trial in microseconds (compensated for 32-bit clock rollover)
                                         nBytesAvailable = BpodSystem.SerialPort.bytesAvailable;
                                     end
                                 end
                                 if (nBytesAvailable > 3)
                                     obj.TrialDoneFlag = 0;
-                                    while nBytesAvailable > 6 && obj.TrialDoneFlag == 0
-                                        opCodeBytes = BpodSystem.SerialPort.read(2, 'uint8');
-                                        disp(['New Event Prefix: ' num2str(opCodeBytes)])
+                                    while BpodSystem.SerialPort.bytesAvailable > 6 && obj.TrialDoneFlag == 0
+                                        opCodeBytes = BpodSystem.SerialPort.read(2, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = opCodeBytes;
+                                        %disp(['New Event Prefix: ' num2str(opCodeBytes)])
                                         opCode = opCodeBytes(1);
                                         switch opCode
                                             case 1 % Receive and handle events
                                                 nEvents2Read = double(opCodeBytes(2));
-                                                NewMessage = BpodSystem.SerialPort.read(nEvents2Read+4, 'uint8');
+                                                NewMessage = BpodSystem.SerialPort.read(nEvents2Read+4, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = NewMessage;
                                                 
-                                                %###Hack in case we have less data than we think### Chuck 12-21-2020
+                                                % Hack in case we have less data than we think Chuck 12-21-2020
                                                 if numel(NewMessage) < nEvents2Read
                                                     nEvents2Read = numel(NewMessage); 
+                                                    try
+                                                        file = which('runrats_datalog_temp.txt');
+                                                        update_logfile(file,['Truncating nEvents2Read from ',num2str(nEvents2Read),' to ',num2str(numel(NewMessage))]);
+                                                    end
                                                 end 
                                                 
-                                                disp(['New Event Bytes: ' num2str(NewMessage)])
+                                                %disp(['New Event Bytes: ' num2str(NewMessage)])
                                                 NewEvents = NewMessage(1:nEvents2Read)+1;
                                                 NewTimestamp = double(typecast(NewMessage(end-3:end), 'uint32'))*obj.TimeScaleFactor;
                                                 %disp(['Event(s) received: ' num2str(NewEvents) ' Timestamp: ' num2str(NewTimestamp)]);
@@ -362,15 +389,17 @@ classdef BpodClientObject < handle
                                                 nCurrentEvents = length(NewEvents);
                                                 % Update object
                                                 if nCurrentEvents > 0
-                                                    obj.CurrentEvents(obj.nUnreadEvents+1:obj.nUnreadEvents+nCurrentEvents) = NewEvents;
+                                                    obj.CurrentEvents(         obj.nUnreadEvents+1:obj.nUnreadEvents+nCurrentEvents) = NewEvents;
                                                     obj.CurrentEventTimestamps(obj.nUnreadEvents+1:obj.nUnreadEvents+nCurrentEvents) = NewTimestamp;
-                                                    obj.nUnreadEvents = obj.nUnreadEvents + nCurrentEvents;
-                                                    obj.nTotalEvents = obj.nTotalEvents + nCurrentEvents;
+                                                    obj.EventTransBlock(       obj.nUnreadEvents+1:obj.nUnreadEvents+nCurrentEvents) = obj.TransBlockCounter;
+                                                    obj.TransBlockCounter = obj.TransBlockCounter + 1;
+                                                    obj.nUnreadEvents     = obj.nUnreadEvents     + nCurrentEvents;
+                                                    obj.nTotalEvents      = obj.nTotalEvents      + nCurrentEvents;
                                                     for i = 1:nCurrentEvents
                                                         if NewEvents(i) == 255 % Exit code
                                                             obj.TrialDoneFlag = 1;
                                                             obj.nTotalEvents = obj.nTotalEvents - 1;
-                                                            TrialEndTimestamps = BpodSystem.SerialPort.read(12, 'uint8');
+                                                            TrialEndTimestamps = BpodSystem.SerialPort.read(12, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = TrialEndTimestamps;
                                                             nHWTimerCycles = double(typecast(TrialEndTimestamps(1:4), 'uint32'));
                                                             TrialEndTimestamp = double(typecast(TrialEndTimestamps(5:12), 'uint64'))/1000000;                                                        
                                                             TrialTimeFromMicros = (TrialEndTimestamp - obj.TrialStartTimestamp);
@@ -379,6 +408,10 @@ classdef BpodClientObject < handle
                                                             if Discrepancy > 1
                                                                 disp([char(10) '***WARNING!***' char(10) 'Bpod missed hardware update deadline(s) on the past trial, by ~' num2str(Discrepancy)...
                                                                 'ms!' char(10) 'An error code (1) has been added to your trial data.' char(10) '**************'])
+                                                                try
+                                                                    file = which('runrats_datalog_temp.txt');
+                                                                    update_logfile(file,['Bpod missed hardware update deadline on the past trial, by ~' num2str(Discrepancy),'ms']);
+                                                                end
                                                             end
                                                         end
                                                     end
@@ -391,8 +424,78 @@ classdef BpodClientObject < handle
                                                 end
                                                 nBytesAvailable = nBytesAvailable - (6+nEvents2Read); % 6 = 4 timestamp bytes + 2 op bytes
                                             case 2
+                                                %opcode for new states
+                                                nEvents2Read = double(opCodeBytes(2));
+                                                NewMessage = BpodSystem.SerialPort.read(nEvents2Read, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = NewMessage;
+                                                %disp(NewMessage);
+                                                if numel(NewMessage) == 1
+                                                    BpodSystem.Status.NewStates(end+1) = NewMessage;
+                                                end
+                                                
                                                 %make this a disp rather than error. let's see what happens if we simply ignore
-                                                disp('Error: Bpod soft code returned from state machine. Soft codes are not supported for B-control protocols.')
+                                                %disp('Error: Bpod soft code returned from state machine. Soft codes are not supported for B-control protocols.')
+                                                %try
+                                                %    file = which('runrats_datalog_temp.txt');
+                                                %    update_logfile(file,['Bpod soft code returned from state machine']);
+                                                %end
+                                            case 3
+                                                %Reserved for the transmission of status events. These are a string of 18 8-bit elements, following the opcode and
+                                                %the number of bytes to read that contain the following information:
+                                                %
+                                                %position 1: the previous state's number (in Bpod numbering)
+                                                %position 2: the current state's number (in Bpod numbering)
+                                                %positions 3-6: the current time in the bpod, this time value resets every trial
+                                                %position 7: the trigger status of scheduled waves 1-8, each byte represents a wave
+                                                %position 8: the trigger status of scheduled waves 9-16, each byte represents a wave
+                                                %position 9: the first 4 bytes represent the trigger status of waves 17-20,
+                                                %            the remaining bytes are not used
+                                                %position 10: bytes 1-6 are currently not used. Byte 7 will be set to 1
+                                                %            if the status event is generated because a state transition
+                                                %            was forced by an external "N" command. Byte 8 will be set to 1
+                                                %            if the status event is generated because a wave has been
+                                                %            triggered. If both bytes 7 and 8 are 0 then the status event
+                                                %            was generated because it's been 10s since the previous status
+                                                %            event
+                                                %positions 11-18: are the session time since the bpod was last reset.
+                                                %The commented out code below will transform a raw status event into human readable data
+                                                
+                                                nEvents2Read = double(opCodeBytes(2));
+                                                NewMessage = BpodSystem.SerialPort.read(nEvents2Read, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = NewMessage;
+                                                %disp(NewMessage);
+                                                if numel(NewMessage) == 18
+                                                    BpodSystem.Status.StatusEvents(end+1,:) = NewMessage;
+                                                end
+                                                %previousState = NewMessage(1);
+                                                %currentState  = NewMessage(2);
+                                                %currentTime   = double(typecast(NewMessage(3:6), 'uint32'));
+                                                %
+                                                %BcontrolTime =  (currentTime * obj.TimeScaleFactor) +  obj.TrialStartTimestamp;
+                                                %
+                                                %sessionTime = double(typecast(NewMessage(11:18), 'uint64')) / 1e6;
+                                                %wavestatus  = decimalToBinaryVector(double(typecast(NewMessage(7:10), 'uint32')),32,'LSBFirst');
+                                                %triggeredwaves = find(wavestatus(1:20) == 1);
+                                                %if wavestatus(32) == 1
+                                                %    message = 'Triggered Wave Update: ';
+                                                %else
+                                                %    message = '        Status Update: ';
+                                                %end
+                                                %disp([message,' Previous State ',num2str(previousState),...
+                                                %              ', Current State ',num2str(currentState),...
+                                                %              ', Current Time ',num2str(currentTime / 1e4),...
+                                                %              ', Session Time ',num2str(sessionTime),...
+                                                %              ', Triggered Waves ',num2str(triggeredwaves)]); %', Bcontrol Time ',num2str(BcontrolTime),...
+                                            case 4
+                                                %opcode 4 is reserved for transmission of the full state path variable. As the bpod works through a trial on
+                                                %a state matrix is stores the number of each state it passes through. At the end of a trial or when receiving the
+                                                %"@" external command the bpod transmits the values stored in this variable. Use the get_full_state_path_names 
+                                                %to transform this vector of state numbers into human readible state names.The FullStatePath variable on the 
+                                                %bpod can store up to 65000 states and uses a second rollover counter to keep track of the number of values
+                                                %stored. We need to pull one more value to determine how many states are stored
+                                                rolloverbit = BpodSystem.SerialPort.read(1, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = rolloverbit;
+                                                nEvents2Read = typecast([opCodeBytes(2),rolloverbit],'uint16');
+                                                NewMessage = BpodSystem.SerialPort.read(nEvents2Read, 'uint8'); BpodSystem.Status.AllDataTrans{end+1} = NewMessage;
+                                                %disp(['Full State Path: ',num2str(NewMessage)]);    
+                                                BpodSystem.Status.FullStatePath = NewMessage;
                                         end
                                     end
                                 end
@@ -429,19 +532,23 @@ classdef BpodClientObject < handle
                                     i = 1; ExitEventFound = 0;
                                     nCurrentEvents = obj.nUnreadEvents;
                                     Encountered255 = 0; %Need to make sure we don't see more than one of these
+                                    NewStateCode = BpodSystem.Status.CurrentStateCode;
                                     while i <= obj.nUnreadEvents
-                                        ThisEvent = obj.CurrentEvents(i);
-                                        ThisEventTime = obj.CurrentEventTimestamps(i);
+                                        ThisEvent      = obj.CurrentEvents(i);
+                                        ThisEventTime  = obj.CurrentEventTimestamps(i);
+                                        ThisTransBlock = obj.EventTransBlock(i);
                                         if BpodSystem.Status.CurrentStateCode > BpodSystem.StateMatrix.nStates && ThisEvent ~=255
                                             %2021-03-03 Hack so if an event comes in when we're in the final state and it's not 255 we simple make it 255.
-                                            %rigid = bSettings('get','RIGS','Rig_ID');
-                                            %send_text_message('Bpod sendstring FORCING EVENT 255',['Rig ',num2str(rigid),' CRASH'],'Chuck');
-                                            
                                             disp(['Event: ',num2str(ThisEvent),' received in State: ',num2str(BpodSystem.Status.CurrentStateCode),' which is > nState: ',num2str(BpodSystem.StateMatrix.nStates)]);
                                             disp('FORCING EVENT 255');
                                             ThisEvent = 255;
+                                            
+                                            try
+                                                file = which('runrats_datalog_temp.txt');
+                                                update_logfile(file,['Event: ',num2str(ThisEvent),' received in State: ',num2str(BpodSystem.Status.CurrentStateCode),' which is > nState: ',num2str(BpodSystem.StateMatrix.nStates),' FORCING EVENT 255']);
+                                            end
                                         else
-                                            disp(['Processing event: ' num2str(ThisEvent) ', Current State: ' num2str(BpodSystem.Status.CurrentStateCode) ', Current Time: ' num2str(ThisEventTime)]);
+                                            %disp(['Processing event: ' num2str(ThisEvent) ', Current State: ' num2str(BpodSystem.Status.CurrentStateCode) ', Current Time: ' num2str(ThisEventTime)]);
                                         end
                                         if ThisEvent ~= 255
                                             CEprestates(i) = BpodSystem.Status.CurrentStateCode;
@@ -456,8 +563,17 @@ classdef BpodClientObject < handle
                                                     disp(['Event: ',num2str(ThisEvent),' is > number of Bcontrol Event Code Map.'])
                                                     disp('FORCING 0 EVENT');
                                                     CEevents(i) = 0;
+                                                    
+                                                    try
+                                                        file = which('runrats_datalog_temp.txt');
+                                                        update_logfile(file,['Event: ',num2str(ThisEvent),' is > number of Bcontrol Event Code Map. FORCING 0 EVENT']);
+                                                    end
                                                 end
                                             else
+                                                try
+                                                    file = which('runrats_datalog_temp.txt');
+                                                    update_logfile(file,['Error: Bpod event ' BpodSystem.StateMachineInfo.EventNames{ThisEvent} ' occurred, but is not supported by B-control']);
+                                                end
                                                 error(['Error: Bpod event ' BpodSystem.StateMachineInfo.EventNames{ThisEvent} ' occurred, but is not supported by B-control'])
                                             end
                                             CETimestamps(i) = obj.CurrentEventTimestamps(i) + obj.TrialStartTimestamp;
@@ -466,13 +582,13 @@ classdef BpodClientObject < handle
                                             if Encountered255 == 0
                                                 %consider cropping nCurrentEvents here so no events can happen after 255
                                                 nCurrentEvents = i;
-                                                disp(' ');
+                                                %disp(' ');
                                                 disp('Trial end code received!');
-                                                disp(['End code position in transmission: ' num2str(i)]);
-                                                disp(['nCurrentEvents:' num2str(nCurrentEvents)]);
-                                                disp(['obj.CurrentEvents:' num2str(obj.CurrentEvents(1:nCurrentEvents))]);
-                                                disp(['CEEvents:' num2str(CEevents)]);
-                                                disp(['CETimestamps:' num2str(CETimestamps)]);
+                                                %disp(['End code position in transmission: ' num2str(i)]);
+                                                %disp(['nCurrentEvents:' num2str(nCurrentEvents)]);
+                                                %disp(['obj.CurrentEvents:' num2str(obj.CurrentEvents(1:nCurrentEvents))]);
+                                                %disp(['CEEvents:' num2str(CEevents)]);
+                                                %disp(['CETimestamps:' num2str(CETimestamps)]);
                                                 if nCurrentEvents == 1 % Only a trial-end code was sent
                                                     EndTimestamp = CETimestamps(1); % Save timestamp of trial-end code
                                                 end
@@ -492,25 +608,39 @@ classdef BpodClientObject < handle
                                                 break
                                             else
                                                 disp('Ignoring repeated event 255');
+                                                try
+                                                    file = which('runrats_datalog_temp.txt');
+                                                    update_logfile(file,'Ignoring repeated event 255');
+                                                end
+                                                
                                             end
                                         elseif ThisEvent < GlobalTimerStartOffset
-                                            BpodSystem.Status.CurrentStateCode = BpodSystem.StateMatrix.InputMatrix(BpodSystem.Status.CurrentStateCode, obj.CurrentEvents(i));
+                                            NewStateCode = BpodSystem.StateMatrix.InputMatrix(BpodSystem.Status.CurrentStateCode, obj.CurrentEvents(i));
                                         elseif ThisEvent < GlobalTimerEndOffset
-                                            BpodSystem.Status.CurrentStateCode = BpodSystem.StateMatrix.GlobalTimerStartMatrix(BpodSystem.Status.CurrentStateCode, obj.CurrentEvents(i)-(GlobalTimerStartOffset-1));
+                                            NewStateCode = BpodSystem.StateMatrix.GlobalTimerStartMatrix(BpodSystem.Status.CurrentStateCode, obj.CurrentEvents(i)-(GlobalTimerStartOffset-1));
                                         elseif ThisEvent < GlobalCounterOffset
-                                            BpodSystem.Status.CurrentStateCode = BpodSystem.StateMatrix.GlobalTimerEndMatrix(BpodSystem.Status.CurrentStateCode, obj.CurrentEvents(i)-(GlobalTimerEndOffset-1));
+                                            NewStateCode = BpodSystem.StateMatrix.GlobalTimerEndMatrix(BpodSystem.Status.CurrentStateCode, obj.CurrentEvents(i)-(GlobalTimerEndOffset-1));
                                         elseif ThisEvent < ConditionOffset
-                                            BpodSystem.Status.CurrentStateCode = BpodSystem.StateMatrix.GlobalCounterMatrix(BpodSystem.Status.CurrentStateCode, obj.CurrentEvents(i)-(GlobalCounterOffset-1));
+                                            NewStateCode = BpodSystem.StateMatrix.GlobalCounterMatrix(BpodSystem.Status.CurrentStateCode, obj.CurrentEvents(i)-(GlobalCounterOffset-1));
                                         elseif ThisEvent < JumpOffset
-                                            BpodSystem.Status.CurrentStateCode = BpodSystem.StateMatrix.ConditionMatrix(BpodSystem.Status.CurrentStateCode, obj.CurrentEvents(i)-(ConditionOffset-1));
+                                            NewStateCode = BpodSystem.StateMatrix.ConditionMatrix(BpodSystem.Status.CurrentStateCode, obj.CurrentEvents(i)-(ConditionOffset-1));
                                         elseif ThisEvent == BpodSystem.HW.StateTimerPosition
-                                            BpodSystem.Status.CurrentStateCode = BpodSystem.StateMatrix.StateTimerMatrix(BpodSystem.Status.CurrentStateCode);
+                                            NewStateCode = BpodSystem.StateMatrix.StateTimerMatrix(BpodSystem.Status.CurrentStateCode);
                                         else
                                             %Hack 2021-03-03 Made this disp rather than error so we ignore this event and stay in the same state
-                                            %rigid = bSettings('get','RIGS','Rig_ID');
-                                            %send_text_message('Bpod sendstring NO STATE TRANSITION',['Rig ',num2str(rigid),' CRASH'],'Chuck');
-                
                                             disp(['Error: Unknown event code returned: ' num2str(ThisEvent)]);
+                                            try
+                                                file = which('runrats_datalog_temp.txt');
+                                                update_logfile(file,['Error: Unknown event code returned: ' num2str(ThisEvent)]);
+                                            end
+                                        end
+                                        if NewStateCode ~= BpodSystem.Status.CurrentStateCode && obj.LastTransBlock < ThisTransBlock
+                                            %All work and no play makes Chuck a dull boy. I think this code may be the fix to the frequent rig crashes where
+                                            %dispatcher gets stuck in state 0. This is likely happening because the bpod rule for state transitions is to 
+                                            %only use at most one event per hardware cycle that can cause a state transition. On the matlab side all events 
+                                            %were considered for state transitions.
+                                            BpodSystem.Status.CurrentStateCode = NewStateCode;
+                                            obj.LastTransBlock = ThisTransBlock;
                                         end
                                         if ~ExitEventFound
                                             CEpoststates(i) = BpodSystem.Status.CurrentStateCode;
