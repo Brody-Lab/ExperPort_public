@@ -1,7 +1,7 @@
 % [obj, ret2] = dispatcher({'init'}, {'empty'}, {'runstart_enable'}, {'runstart_disable}, ...
 %                    {'close_protocol'}, {'set_protocol}, ...
 %                    {'get_state_machine | getstatemachine'}, {'get_sound_machine' | 'getsoundmachine'}, ...
-%                    {'send_assembler', sma}, {'send_statenames', cellstr})
+%                    {'send_assembler', sma}, {'send_statenames', cellstr}, {'send_max_state_dur',cell})
 %
 %
 % Dispatcher serves as a central gateway between Matlab code and the
@@ -99,6 +99,21 @@
 % 'toggle_bypass' Given a bypass channel number (e.g. 1,2,3,4,5...) or an
 %                 array of bypass channel numbers, toggles those bypass
 %                 lines to their opposite setting (on to off, off to on).
+%
+% 'send_max_state_dur' pass in a Nx2 cell the first column being the state
+%             names as a string and the second column being the maximum
+%             possible duration in seconds you could spend in that state. A
+%             rule of thumb is determine the max possible duration and then
+%             x10 just incase things are running slow. RunningSection uses
+%             these values to determine if the Bpod is stuck
+%
+% 'end_of_trial_store_variables' must be called with an additional input
+%             either 1 to forse a push_history call or 0 to not push. This
+%             section is called automatically when state 0 is found at the
+%             end of each trial and stores bpod related variables to
+%             soloparams and pushes the history of parsed and raw event. It
+%             is here so runrats can call it at the end of a session to get
+%             the bpod variables to save
 
 
 % Written by Carlos Brody May 2007
@@ -119,14 +134,19 @@ if nargin==1 && ischar(varargin{1}) && strcmp(varargin{1}, 'init'),
    
 	v=version;
 	v=str2double(v(1:3));
-	if v>=7.4
+    if v >= 9.7
+        %rng(bitand(round(now*1E10),2^16-1),'twister');
+        rng('shuffle');
+    elseif v >= 7.4
 		rand('twister',bitand(round(now*1E10),2^16-1));
 	else
 		rand('state',bitand(round(now*1E10),2^16-1));
-	end
+    end
 	
-	randn('state', bitand(round(now*1E10),2^16-1));
-	
+    if v < 9.7
+    	randn('state', bitand(round(now*1E10),2^16-1));
+    end
+    
   if exist('myfig', 'var'),
     if isa(myfig, 'SoloParamHandle') && ishandle(value(myfig)), delete(value(myfig)); end;
   end;
@@ -182,7 +202,7 @@ switch action,
     obj = MachinesSection(obj, action);    
   case 'send_statenames', % ----- send_state_names ----
     MachinesSection(obj, action, varargin{1});
-  case {'set_trialnum_indicator_flag', 'unset_trialnum_indicator_flag'},
+  case {'set_trialnum_indicator_flag', 'unset_trialnum_indicator_flag','pop_history'},
     MachinesSection(obj, action);
   case {'get_trialnum_indicator_flag'}
     ret2 = MachinesSection(obj, action);
@@ -208,7 +228,8 @@ switch action,
     obj = RunningSection(obj, action);
   case 'disassemble',
     RunningSection(obj, action, varargin{1});
-    
+  case 'send_max_state_dur',
+    RunningSection(obj, action, varargin{1});      
     
     % --- PROTOCOLS ---
   case {'close_protocol' 'rescan_protocols' 'restart_protocol'},   ProtocolsSection(obj, action);
@@ -216,7 +237,8 @@ switch action,
   case {'get_protocol_list' 'get_protocol_object'} 
     obj = ProtocolsSection(obj, action);
 
-    
+  case 'end_of_trial_store_variables'
+    RunningSection(obj, action, varargin{1});
     
     
   case 'init_bypass',

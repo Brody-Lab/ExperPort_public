@@ -238,6 +238,16 @@ switch action,
     push_history(value(OpenProtocolObject));
     push_history(prepare_next_trial_set);
     
+    
+  % ------------------------------------------------------------------
+  %                       POP_HISTORY
+  % ------------------------------------------------------------------
+
+    case  'pop_history',
+    pop_history(current_assembler);
+    pop_history(value(OpenProtocolObject));
+    pop_history(prepare_next_trial_set);    
+        
   % ------------------------------------------------------------------
   %                       REPEAT_TRIAL
   % ------------------------------------------------------------------
