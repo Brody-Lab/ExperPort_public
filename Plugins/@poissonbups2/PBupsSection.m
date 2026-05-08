@@ -108,6 +108,12 @@ switch action
     set_callback(test_play, {mfilename, 'test_play'});
     set_callback(test_stop, {mfilename, 'test_stop'});
 	next_row(y);
+    ToggleParam(obj, 'is_rat_being_simulated', 0, x, y, 'position', [x y 200 20], ...
+		'OffString', 'not simulating rat', ...
+		'OnString',  'simulating rat', ...
+		'TooltipString', 'Simulate the behavioral responses of a rat?');
+    set_callback(is_rat_being_simulated, {mfilename, 'check_is_rat_being_simulated'});
+    next_row(y);
     SubheaderParam(obj, 'title1', 'Testing Section', x, y);
     next_row(y, 1.3);
 	
@@ -147,6 +153,10 @@ switch action
     NumeditParam(obj, 'ao_on_ramp_dur_s', 0, x, y, 'position', [x y 250 20], ...
         'labelfraction', 0.4, ...
         'TooltipString', 'Onset ramp duration in second. Ramp occurs during STIM_DUR and has a waveform according to AO_IS_SINE_NOT_SQUARE');
+    next_row(y);
+    NumeditParam(obj, 'ao_square_pulse_probability', 1, x, y, 'position', [x y 500 20], ...
+        'labelfraction', 0.4, ...
+        'TooltipString', 'Probability of a square pulse being emitted.');
     next_row(y);
     NumeditParam(obj, 'ao_max_V', 5, x, y, 'position', [x+250 y 250 20], ...
         'labelfraction', 0.4, ...
@@ -221,7 +231,7 @@ switch action
 
 
     set_callback({stim_trigger_state; stim_pre; stim_dur; stim_pre_jitter; stimulator_frac; stim_freq; stim_pulse; stim_power1; stim_power2;...
-                  ao_min_V; ao_max_V; ao_on_ramp_dur_s; ao_off_ramp_dur_s}, {mfilename, 'update_stim'});
+                  ao_min_V; ao_max_V; ao_square_pulse_probability; ao_on_ramp_dur_s; ao_off_ramp_dur_s}, {mfilename, 'update_stim'});
    
      set_callback({stim_is_analog_not_digital, ao_is_sine_not_square}, {mfilename, 'update_laser_analog_output'});
     
@@ -421,12 +431,19 @@ switch action
         'TooltipString', 'Tones that make up each click');
     
     next_row(y);
-    NumeditParam(obj,'frozen_frac',0.5,x,y,'position',[x y 150 20],...
-        'label','frozen fraction','TooltipString','the fraction of trials that use frozen noise');
-    NumeditParam(obj,'n_seeds',10,x,y,'position',[x+150 y 200 20],...
-        'label','no. frozen seeds','TooltipString','size of the pool of frozen noise seeds to select amongst (a separate pool for each gamma/totalrate combination)');
-    NumeditParam(obj, 'headphone_attentuation_dB', [20, 20], x, y, 'position', [x+350 y 250 20], ...
-        'label', 'headphone atten. (dB)', ...
+    NumeditParam(obj,'frozen_frac',0.5,x,y,'position',[x y 120 20],...
+        'label','frozen frac','TooltipString','the fraction of trials that use frozen noise','labelfraction',0.65);
+    NumeditParam(obj,'n_seeds',10,x,y,'position',[x+120 y 140 20],...
+        'label','n frozen seeds','TooltipString','size of the pool of frozen noise seeds to select amongst (a separate pool for each gamma/totalrate combination)',...
+        'labelfraction',0.65);
+    ToggleParam(obj, 'frozen_trial_rule', 0, x, y, 'position', [x+260 y 130 20], ...
+		'OffString', 'Random Sampling', ...
+		'OnString',  'Uniform Sampling', ...
+		'TooltipString', 'define how frozen seeds are selected, random is true random, uniform ensures all seeds are presented a similar number of times per session');
+    
+    
+    NumeditParam(obj, 'headphone_attentuation_dB', [20, 20], x, y, 'position', [x+390 y 220 20], ...
+        'label', 'headphone atten. (dB)', 'labelfraction',0.7, ...
         'TooltipString', ['[left,right]. The minimum is limited by the ' ...
                           '"HEADPHONE_MAX_C" in Settings_Custom']);
     set_callback({headphone_attentuation_dB}, {mfilename, 'check_headphones'});
@@ -584,6 +601,9 @@ switch action
           % https://brodylabwiki.princeton.edu/wiki/images/7/7e/Lynx_L22_ma
           % nual.pdf
       end
+%% check_is_rat_being_simulated
+  case 'check_is_rat_being_simulated'
+    x = value(is_rat_being_simulated);
 %% check_passive_stimulation
   case 'check_passive_stimulation'
     if isnan(bSettings('get', 'GENERAL', 'HEADPHONE_MAX_V'))
@@ -697,7 +717,8 @@ switch action
             snd = singlebup(srate, 0,'tones', tones, ...
                                      'width', bup_width, ...
                                      'basefreq', base_freq(1), ...
-                                     'ramp', bup_ramp);
+                                     'ramp', bup_ramp,...
+                                     'ntones', value(ntones));
             if task_type % spatial localization
                 snd(2,:) = zeros(1,numel(snd));
             else
@@ -708,7 +729,8 @@ switch action
             snd = singlebup(srate, 0,'tones', tones, ...
                                      'width', bup_width, ...
                                      'basefreq', base_freq(numel(base_freq)), ...
-                                     'ramp', bup_ramp);
+                                     'ramp', bup_ramp,...
+                                     'ntones', value(ntones));
             if task_type % spatial localization
                 snd = [zeros(1,numel(snd)); snd];
             else
@@ -727,6 +749,7 @@ switch action
                                        'bup_ramp', value(bup_ramp),...
                                        'avoid_collisions',value(avoid_collisions), ...
                                        'min_ISI',value(min_ISI),...
+                                       'ntones',value(ntones),...
                                        'task_type',value(task_type));
     end
     % ** Add silence to snd so that sound duration is T_max seconds **
@@ -764,14 +787,14 @@ switch action
         [snd,lrate,rrate,bpt] = make_pbup(value(total_rate), value(ThisGamma), srate, value(T), ...
                                            'bup_width', value(bup_width), 'first_bup_stereo', value(first_bup_stereo), ...
                                            'crosstalk', value(crosstalk), 'base_freq', value(base_freq), ...
-                                           'tones', value(tones), 'bup_ramp', value(bup_ramp),...
+                                           'tones', value(tones), 'bup_ramp', value(bup_ramp),'ntones', value(ntones),...
                                            'avoid_collisions',value(avoid_collisions),'min_ISI',value(min_ISI),...
                                            'seed',value(ThisSeed),'task_type',value(task_type)); %#ok<NODEF>;        
     else
         [snd,lrate,rrate,bpt] = make_pbup(value(total_rate), value(ThisGamma), srate, value(T), ...
                                            'bup_width', value(bup_width), 'first_bup_stereo', value(first_bup_stereo), ...
                                            'crosstalk', value(crosstalk), 'base_freq', value(base_freq), ...
-                                           'tones', value(tones), 'bup_ramp', value(bup_ramp),...
+                                           'tones', value(tones), 'bup_ramp', value(bup_ramp),'ntones', value(ntones),...
                                            'avoid_collisions',value(avoid_collisions),'min_ISI',value(min_ISI),...
                                            'seed',value(ThisSeed),'fixed_sound',value(Bups),'task_type',value(task_type)); %#ok<NODEF>;        
     end
@@ -840,7 +863,7 @@ switch action
       end
 
     % if frozen, set a random seed within a small predetermined range                
-    is_frozen.value = value(frozen_frac)<rand;
+    is_frozen.value = rand<value(frozen_frac);
     %if value(is_frozen)
     %    ThisSeed.value = round(value(total_rate)*10)*10^7 + round(value(ThisGamma)*10^2)*10^4 + (side=='r')*10^3 + randi(min(999,value(n_seeds)-1),1) ; % this more or less ensures frozen seeds are unique for each possible combination of gamma, side, and total_rate
     %else
@@ -888,7 +911,12 @@ switch action
       end
       %Needed to move this code below when gamma is generated for this trial
       if value(is_frozen)
-          ThisSeed.value = round(value(total_rate)*10)*10^7 + round(value(ThisGamma)*10^2)*10^4 + (side=='r')*10^3 + floor(rand(1)*value(n_seeds)); % this more or less ensures frozen seeds are unique for each possible combination of gamma, side, and total_rate
+          if value(frozen_trial_rule) == 0
+            ThisSeed.value = round(value(total_rate)*10)*10^7 + round(value(ThisGamma)*10^2)*10^4 + (side=='r')*10^3 + floor(rand(1)*value(n_seeds)); % this more or less ensures frozen seeds are unique for each possible combination of gamma, side, and total_rate
+          else
+            %Put code here to ensure uniform sampling;
+            feval(mfilename, obj, 'compute_uniform_seed'); 
+          end
       else
           c = clock;
           ThisSeed.value = randi(10^9,1) + round(c(6)*1e3);
@@ -906,6 +934,78 @@ switch action
       y = value(T);
 
 
+case('compute_uniform_seed')
+    
+    if value(ThisGamma) > 0
+        side = 'r';
+    else
+        side = 'l';
+    end
+    
+    all_gammas = [value(L_gammas),value(R_gammas)];
+
+    all_seeds = [];
+    seed_gammas = [];
+
+    a = round(value(total_rate)*10)*10^7;
+    b = round(all_gammas.*10^2).*10^4;
+    c = [0,1].*10^3; %neg gamma left trial
+    d = 0:value(n_seeds)-1;
+
+    for i = 1:numel(a)
+        for j = 1:numel(b)
+            for k = 1:numel(c)
+                for m = 1:numel(d)
+                    if (b(j) > 0 && c(k) == 1000) || (b(j) < 0 && c(k) == 0)
+                        all_seeds(end+1) = a(i) + b(j) + c(k) + d(m);
+                        seed_gammas(end+1) = all_gammas(j);
+                    end
+                end
+            end
+        end
+    end
+
+    seed_history = cell2mat(get_history(ThisSeed));
+
+    seed_n = zeros(numel(all_seeds),1);
+    for i = 1:numel(all_seeds)
+        seed_n(i) = sum(seed_history == all_seeds(i) & violation_history == 0);
+    end
+
+    minn = min(seed_n);
+    maxn = max(seed_n);
+
+    x = minn:maxn;
+    prob = 2.^(((maxn:-1:minn) - minn) + 1);
+    p = zeros(size(seed_n));
+    for j = 1:numel(x)
+        p(seed_n == x(j)) = prob(j);
+    end
+    
+    if side == 'l'
+        p((numel(p)/2)+1:end) = 0;
+    else
+        p(1:(numel(p)/2)) = 0;
+    end
+    
+    if ~isempty(seed_history)
+        z = find(all_seeds == seed_history(end));
+        if ~isempty(z)
+            p(z) = 0;
+        end
+    end
+    true_prob = p./sum(p);
+
+    threshold = [];
+    for j = 1:numel(true_prob) 
+        threshold(j) = sum(true_prob(1:j));
+    end
+
+    seed_pos = find(threshold > rand(1),1,'first');
+    ThisSeed.value = all_seeds(seed_pos);
+    ThisGamma.value = seed_gammas(seed_pos);
+    
+        
 case 'next_trial_stimulator'
     feval(mfilename, obj, 'pick_stimulator', varargin{1}, varargin{2}, varargin{3});
     feval(mfilename, obj, 'pick_mask');
@@ -919,6 +1019,11 @@ case 'next_trial_stimulator'
       push_history(MaskSpecs);
       push_history(is_frozen);
       push_history(ThisSeed);  
+      
+      
+ %% push_history_stimulatorspecs
+  case 'push_history_stimulatorspecs'
+     push_history(StimulatorSpecs);     
 
 %% update_hitfrac
   case 'update_hitfrac',
@@ -1028,13 +1133,13 @@ case 'next_trial_stimulator'
         [snd] = make_pbup(value(total_rate), value(test_gamma), srate, value(sduration), ...
                          'bup_width', value(bup_width), 'first_bup_stereo', value(first_bup_stereo), ...
                          'crosstalk', value(crosstalk), ...
-                         'tones', value(tones), 'bup_ramp', value(bup_ramp),...
+                         'tones', value(tones), 'bup_ramp', value(bup_ramp),'ntones', value(ntones),...
                          'avoid_collisions',value(avoid_collisions),'min_ISI',value(min_ISI),'task_type',value(task_type)); 
     else
         [snd] = make_pbup(value(total_rate), value(test_gamma), srate, value(sduration), ...
                          'bup_width', value(bup_width), 'first_bup_stereo', value(first_bup_stereo), ...
                          'crosstalk', value(crosstalk), 'base_freq', value(base_freq), ...
-                         'ntones', value(ntones), 'bup_ramp', value(bup_ramp),...
+                         'tones', value(tones), 'bup_ramp', value(bup_ramp),'ntones', value(ntones),...
                          'avoid_collisions',value(avoid_collisions),'min_ISI',value(min_ISI),'task_type',value(task_type)); 
     end
     snd = feval(mfilename, obj, 'adjust_volume', snd);             
@@ -1329,6 +1434,13 @@ case 'next_trial_stimulator'
           ao_max_V.value = s(1:n);
       end 
       
+      if numel(ao_square_pulse_probability) < n
+          ao_square_pulse_probability.value = [s s(end)*ones(1,n-numel(s))];
+      elseif numel(ao_square_pulse_probability) > n
+          s = value(ao_square_pulse_probability);
+          ao_square_pulse_probability.value = s(1:n);
+      end 
+      
       if numel(ao_on_ramp_dur_s) < n,
           s = value(ao_on_ramp_dur_s);
           ao_on_ramp_dur_s.value = [s s(end)*ones(1,n-numel(s))];
@@ -1351,6 +1463,10 @@ case 'next_trial_stimulator'
       s = value(ao_max_V);
       s(s < -10) = -10;
       ao_max_V.value = s;
+      s = value(ao_square_pulse_probability);
+      s(s < 0) = 0;
+      s(s > 1) = 1;
+      ao_square_pulse_probability.value = s;
       s = value(ao_on_ramp_dur_s);
       s(s < 0) = 0;
       ao_on_ramp_dur_s.value = s;
@@ -1377,7 +1493,7 @@ case 'next_trial_stimulator'
               eval(['enable(' param{:} ')']);
           end
       end
-      for param = {'ao_min_V', 'ao_max_V', 'ao_on_ramp_dur_s', 'ao_off_ramp_dur_s', 'ao_is_sine_not_square'}
+      for param = {'ao_min_V', 'ao_max_V', 'ao_square_pulse_probability', 'ao_on_ramp_dur_s', 'ao_off_ramp_dur_s', 'ao_is_sine_not_square'}
           if stim_is_analog_not_digital && is_set_up_for_analog_output
             eval(['enable(' param{:} ')']);
           else
@@ -1439,7 +1555,7 @@ case 'next_trial_stimulator'
           mystim = 0;
       elseif sum(value(stimulator_frac)) < eps,
           mystim = 0;
-      elseif value(require_cerebro) && ~CerebroSection(obj,'is_connected')
+      elseif value(require_cerebro) && ~CerebroSection(obj,'is_cerebro_connected')
            mystim=0;
            warning('Settings dictate cerebro connection is required for stimulation but one is not connected.');
       elseif stim_is_analog_not_digital && ~is_set_up_for_analog_output
@@ -1513,7 +1629,7 @@ case 'next_trial_stimulator'
 
 %% send new specs to cerebro
   case 'send_specs_to_cerebro'
-      if value(ThisStim) && CerebroSection(obj,'is_connected')
+      if value(ThisStim) && CerebroSection(obj,'is_cerebro_connected')
           CerebroSection(obj,'send_stim_specs',StimulatorSpecs); 
       end
 
@@ -1525,6 +1641,7 @@ case 'next_trial_stimulator'
     StimulatorSpecs.analog_output.is_sine_not_square = value(ao_is_sine_not_square);
     StimulatorSpecs.analog_output.min_V = ao_min_V(mystim);
     StimulatorSpecs.analog_output.max_V = ao_max_V(mystim);
+    StimulatorSpecs.analog_output.ao_square_pulse_probability = ao_square_pulse_probability(mystim);
     StimulatorSpecs.analog_output.on_ramp_dur_s = ao_on_ramp_dur_s(mystim);
     StimulatorSpecs.analog_output.off_ramp_dur_s = ao_off_ramp_dur_s(mystim);
     % simplify nomenclature of variables for manipulation
@@ -1547,9 +1664,19 @@ case 'next_trial_stimulator'
             analog_out_V = analog_out_V * (max_V-min_V)/2; 
             analog_out_V = analog_out_V + min_V;
         else
-            t = mod(t, 1/StimulatorSpecs.freq);
+            pulse_on_s = StimulatorSpecs.pulse/1000;
+            pulse_ntimesteps = floor(pulse_on_s/clock_cycle_s);
+            period_s = 1/StimulatorSpecs.freq;
+            nperiods = ceil(StimulatorSpecs.freq*max(t));
             analog_out_V = min_V*ones(1,numel(t));
-            analog_out_V(t < StimulatorSpecs.pulse/1000) = max_V;
+            for i = 1:nperiods
+                period_first_timestep = find(t >= (i-1)*period_s-clock_cycle_s,1);
+                period_last_timestep = find(t <= i*period_s-clock_cycle_s,1,'last');
+                pulse_last_timestep = min(period_last_timestep, period_first_timestep+pulse_ntimesteps);
+                if rand < StimulatorSpecs.analog_output.ao_square_pulse_probability
+                    analog_out_V(period_first_timestep:pulse_last_timestep) = max_V;
+                end
+            end
         end
     end
     n_ramp_on  = floor(on_ramp_dur_s  * clock_speed_hz); % number of samples
