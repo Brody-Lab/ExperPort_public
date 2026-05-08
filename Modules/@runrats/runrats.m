@@ -136,6 +136,9 @@ switch action
             end
         end
         
+        %Copy Settings Files to Cup
+        runrats(obj,'copy_settings_files');
+        
         % Start and hide the dispatcher.
         
         dispobj=dispatcher('init');
@@ -152,7 +155,7 @@ switch action
         % at the bottom so video will be less obstructed
         sr = get(0,'MonitorPositions');
         wh = [650 250];
-        pos = [(sr(3)-wh(1))/2,10,wh(1),wh(2)];
+        pos = [(sr(3)-wh(1))/2,50,wh(1),wh(2)];
         
         fig = double(figure('Position',pos,'MenuBar','none','ToolBar','none', ...
             'NumberTitle','off','Name','RunRats V2.5','Resize','off',...
@@ -197,8 +200,21 @@ switch action
         SoloParamHandle(obj,'ManualTestFail',  'value','none'); %which port purposely failed to test the techs
         SoloParamHandle(obj,'InputArgs',       'value',[]); %used to locally store varargin and pass between cases
         SoloParamHandle(obj,'AutoLoadFile',    'value',autoload_file); %the autoload file
+        SoloParamHandle(obj,'UpdateCounter',   'value',0); %how many times we've called update
+        SoloParamHandle(obj,'SessionEnded',    'value',0); %have we clicked End Session
+        
+        SoloParamHandle(obj,'VideoFile2',      'value',''); %Path video 2  is being saved to
+        SoloParamHandle(obj,'VideoFile3',      'value',''); %Path video 3  is being saved to
+        SoloParamHandle(obj,'VideoFile4',      'value',''); %Path video 4  is being saved to
+        SoloParamHandle(obj,'VideoFile5',      'value',''); %Path video 5  is being saved to
+        SoloParamHandle(obj,'VideoFile6',      'value',''); %Path video 6  is being saved to
+        SoloParamHandle(obj,'VideoFile7',      'value',''); %Path video 7  is being saved to
+        SoloParamHandle(obj,'VideoFile8',      'value',''); %Path video 8  is being saved to
+        SoloParamHandle(obj,'VideoFile9',      'value',''); %Path video 9  is being saved to
+        SoloParamHandle(obj,'VideoFile10',     'value',''); %Path video 10 is being saved to
         
         
+        try bdata('call cleanup_crashed("{S}","{S}")',999999999,value(RigID)); end
         
         figname = get(fig,'name');
         if value(UseBucket) == 1
@@ -505,6 +521,7 @@ switch action
             %network but we want the loop to go fast to be responsive.
             if ((now - strt) * 24 * 60) > 0.5 || donefirst == 0
                 disp(['RunRats Live Update at ',datestr(now,'HH:MM:SS')]);
+                runrats(obj,'update_backcolor');
                 runrats(obj,'update_schedule');
                 runrats(obj,'estimate_current_session');
                 runrats(obj,'update_exprat');
@@ -512,7 +529,6 @@ switch action
                 runrats(obj,'check_rig_broken');
                 runrats(obj,'update_using_pucks_state');
                 runrats(obj,'check_puck_expiration');
-                
                 
                 if strcmp(get(get_ghandle(MaintenanceTitle),'string'),'Please wait while RunRats updates...')
                     set(get_ghandle(MaintenanceTitle),'string','Rig is Broken','BackgroundColor',[1 0 0]);
@@ -537,6 +553,26 @@ switch action
         end
         
         
+    case 'update_backcolor'
+        %% update_backcolor
+        %Sets the runrats background color to be peach if running normally
+        %or blue if water calibration will expire soon
+        
+        h = value(PanelBack); %#ok<NODEF>
+        for i = 1:length(h)
+            if strcmp(get(h(i),'type'),'figure')
+                propname = 'color';
+            else
+                propname = 'BackgroundColor';
+            end
+            if value(CalibAge) >= value(CalibExp)-4 %#ok<NODEF>
+                set(h(i),propname,[0,0.8,1]);
+            else
+                set(h(i),propname,[1,0.8,0.6]);
+            end
+        end
+                
+                
     case 'updatemode_button'
         %% updatemode_button
         %The user has clicked the updatemode button, this will either take
@@ -903,7 +939,7 @@ switch action
         
         ratsch = value(RatSch); %#ok<NODEF>
         if ~isnan(value(CurrSession))
-            if value(CurrSession) <= 9
+            if value(CurrSession) <= 8
                 SchList.value = value(CurrSession);
                 StatusBar.value = ['Ready to load session ',num2str(value(CurrSession))]; %#ok<STRNU>
             else
@@ -1208,7 +1244,8 @@ switch action
     case 'replace_puck'
         %% replace_puck
         
-        mym(bdata,['insert into ratinfo.rigfood set rigid=',num2str(value(RigID)),', datetime="',datestr(now,'yyyy-mm-dd HH:MM:SS'),'"']);
+        %mym(bdata,['insert into ratinfo.rigfood set rigid=',num2str(value(RigID)),', datetime="',datestr(now,'yyyy-mm-dd HH:MM:SS'),'"']);
+        bdata('call ratinfo.replace_foodpuck("{Si}","{S}")',value(RigID),datestr(now,'yyyy-mm-dd HH:MM:SS'))
         runrats(obj,'using_pucks');
         runrats(obj,'updatelog','replace_puck');
         
@@ -1465,7 +1502,7 @@ switch action
             if isempty(currats);                    COMP(i) = nan; %no rats in session
             elseif sum(comp == 2) >= numel(comp)/2; COMP(i) = 2; %session is likely completed
             elseif sum(comp  > 0) >= numel(comp)/2; COMP(i) = 1; %session is likely running
-            else                                    COMP(i) = 0; %session not yet started
+            else,                                   COMP(i) = 0; %session not yet started
             end
             
             %If the session is still running, let's see how long they've been in.
@@ -1479,17 +1516,19 @@ switch action
         if isempty(lastcomp); lastcomp = 0; end
         
         firstreal = find(~isnan(COMP) == 1,1,'first'); %first session with rats schedules
-        if lastcomp < numel(COMP)
+        lastreal  = find(~isnan(COMP) == 1,1,'last');  %last session with rats schedules
+        
+        if lastcomp < lastreal
             nextreal = find(~isnan(COMP(lastcomp+1:end)) == 1,1,'first') + lastcomp;
             if isempty(nextreal); nextreal = []; end
         end
             
-        if     lastcomp == 0;           CurrSession.value = firstreal;
-        elseif lastcomp == numel(COMP); CurrSession.value = [];
-        else                            CurrSession.value = nextreal;
+        if     lastcomp == 0;        CurrSession.value = firstreal;
+        elseif lastcomp == lastreal; CurrSession.value = [];
+        else,                        CurrSession.value = nextreal;
         end
         
-        %In the event the system thinks we've finished 9 but there are
+        %In the event the system thinks we've finished the last session but there are
         %sessions earlier that aren't completed, let's find the first not
         %completed session and make that the current session.
         if isempty(value(CurrSession))
@@ -1513,9 +1552,14 @@ switch action
                 runrats(obj,'updatelog','update_session');
             end
             
-            if (isempty(value(CurrSession)) && ~isempty(CS) && CS == 9) %|| (value(CurrSession) == 7 && CS == 6)
+            never_reboot = bSettings('get','RUNRATS','never_reboot');
+            if isnan(never_reboot)
+                never_reboot = 0;
+            end
+                
+            if (isempty(value(CurrSession)) && ~isempty(CS) && CS == lastreal) && never_reboot == 0 %|| (value(CurrSession) == 7 && CS == 6)
                 %Training for today is nearing its end but this rig is
-                %likely not running a rat in session 9 or it's already out.
+                %likely not running a rat in sthe last session or it's already out.
                 %Let's do the daily reboot for this rig here.
                 runrats(obj,'reboot')
             end
@@ -1606,6 +1650,29 @@ switch action
                      '--sout ',video_file_path,video_file,' &']); 
                 pause(1); 
                 system(['vlc -vvv ',stream_string,' &']);
+                
+                for camera = 2:10
+                    %allows for up to 9 additional cameras
+                    new_record_string = bSettings('get','VIDEO',['record_string',num2str(camera)]);
+                    new_stream_string = bSettings('get','VIDEO',['stream_string',num2str(camera)]);
+
+                    if ischar(new_record_string) && ischar(new_stream_string)
+                        %additional camera found
+                        video_file = [video_file(1:end-4),num2str(camera),'.mp4'];
+
+                        pause(1)
+                        system(['vlc -vvv ',new_record_string,' ',...
+                            '--sout ',video_file_path,video_file,' &']); 
+                        pause(1); 
+                        system(['vlc -vvv ',new_stream_string,' &']);
+                        
+                        eval(['VideoFile',num2str(camera),'.value = [video_file_path,video_file];']);
+                    else
+                        %no camera found
+                        break
+                    end
+                end
+
             else
                 disp('Video recording not started because settings are missing.');
             end
@@ -1622,9 +1689,17 @@ switch action
         %% end_video
         
         system('taskkill /im vlc.exe');
-        pause(10); %ensure video is stopped before write starts
+        pause(20); %ensure video is stopped before write starts
         try
             write_video_network(value(VideoFile)); %#ok<NODEF>
+            for i = 2:10
+                video_file = eval(['value(VideoFile',num2str(i),')']);
+                if ~isempty(video_file)
+                    write_video_network(video_file);
+                else
+                    break;
+                end
+            end
         catch
             disp('Failed to write video file to the network');
         end
@@ -1755,6 +1830,8 @@ switch action
         %Okay, we are finally ready to load the protocol and the rats
         %settings, runrats will then wait for the tech to click Run
         
+        runrats(obj,'updatelog','Load_Start');
+        
         %Let's make sure we have the most up-to-date settings
         runrats(obj,'update_rat',0);
         
@@ -1810,6 +1887,7 @@ switch action
             set(get_ghandle(Multi),'string','Load Protocol','BackgroundColor',[1,1,0.4],'ForegroundColor',[0,0,0],'FontSize',26);
             
             runrats(obj,'live_loop');
+            try send_n_done_trials(obj,'reset'); end %#ok<TRYNC>
             return;
         end
         
@@ -1847,6 +1925,7 @@ switch action
             
             set(get_ghandle(Multi),'string','Load Protocol','BackgroundColor',[1,1,0.4],'ForegroundColor',[0,0,0],'FontSize',26);
             runrats(obj,'live_loop');
+            try send_n_done_trials(obj,'reset'); end %#ok<TRYNC>
             return;
         end
         
@@ -1883,7 +1962,8 @@ switch action
         %    pause(20);
         %    runrats(obj,'redo_manual_test');
         %end
-        
+        runrats(obj,'updatelog','Load_End');
+        try send_n_done_trials(obj,'reset'); end %#ok<TRYNC>
         
         
     case 'redo_manual_test'
@@ -1926,6 +2006,7 @@ switch action
         
         try
             sendstarttime(eval(value(CurrProtocol))); %#ok<NODEF>
+            bdata('call ratinfo.update_rigtrials_lastupdate("{S}","{Si}")',datestr(now,'HH:MM:SS'),value(RigID));
         catch %#ok<CTCH>
             disp('ERROR: Failed to add the start time to the MySQL table.');
         end;
@@ -1962,14 +2043,26 @@ switch action
         clr = get(get_ghandle(Multi),'BackgroundColor');
         set(get_ghandle(Multi),'BackgroundColor',1 - clr);
         
+        %Every 10 flickers we update the lastupdate time in the
+        %ratinfo.rigtrials table. This way we can see if a rig has frozen.
+        %Don't do it every time because that will slow things down
+        UpdateCounter.value = value(UpdateCounter) + 1; %#ok<NODEF>
+        if value(UpdateCounter) >= 10
+            bdata('call ratinfo.update_rigtrials_lastupdate("{S}","{Si}")',datestr(now,'HH:MM:SS'),value(RigID));
+            UpdateCounter.value = 0;
+        end
+        
         
         
     case  'end'
         %% end
         %Ends the current protocol being run through dispatcher
         runrats(obj,'updatelog','runend');
+        SessionEnded.value = 1;
         runrats(obj,'disable_all');
         set(get_ghandle(Multi),'String','Saving...','Fontsize',34);
+        
+        try send_n_done_trials(obj,'reset'); end %#ok<TRYNC>
         
         %Stop dispatcher and wait for it to respond
         dispatcher(value(dispobj),'Stop'); %#ok<NODEF>
@@ -1983,21 +2076,44 @@ switch action
     case 'end_continued'
         %% end_continued
         if value(stopping_process_completed) %This is provided by dispatcher to runrats
-            stop(value(stopping_complete_timer)); %Stop looping.
+            %Rigs freeze during the "End Session" saving period and we
+            %don't know why, so I've wrapped most of the sections in try
+            %catch with a call to email the experimenter if something goes
+            %wrong.
             
-            varargin{1} = value(InputArgs); %#ok<NODEF>
+            try
+                stop(value(stopping_complete_timer)); %Stop looping.
+
+                varargin{1} = value(InputArgs); %#ok<NODEF>
+
+                %Now that everything is stopped let's send an empty state
+                %matrix to the Linux machine.  This will reset all the lines
+                %and sounds to be off.
+                runrats(obj,'send_empty_state_machine')
+
+                %Stop the video recording
+                runrats(obj,'end_video');
+
+                if bSettings('get','RIGS','bpod') == 1
+                    dispatcher(value(dispobj),'end_of_trial_store_variables',0); %#ok<NODEF>
+                end
+                protobj=eval(value(CurrProtocol)); %#ok<NODEF>
+            catch me
+                runrats('email_owner',me)
+            end
             
-            %Now that everything is stopped let's send an empty state
-            %matrix to the Linux machine.  This will reset all the lines
-            %and sounds to be off.
-            runrats(obj,'send_empty_state_machine')
-            
-            %Stop the video recording
-            runrats(obj,'end_video');
-            
-            protobj=eval(value(CurrProtocol)); %#ok<NODEF>
-            feval(value(CurrProtocol), protobj, 'end_session');
-            sfile=SavingSection(protobj,'savedata','interactive',0);
+            try
+                feval(value(CurrProtocol), protobj, 'end_session');
+            catch me
+                %Error in protocol's end_session section
+                runrats('email_owner',me)
+            end
+            try
+                sfile=SavingSection(protobj,'savedata','interactive',0);
+            catch me
+                %Error in data save
+                runrats('email_owner',me)
+            end
             [pname,fname] = fileparts(sfile); %#ok<ASGLU>
             
             %Let's rename the video file according to the data file saved
@@ -2016,6 +2132,26 @@ switch action
                         VideoFile.value = ['X:\RATTER\',v_pname(vidpos:end),filesep,new_vfile];
                     end
                 end
+                
+                for i = 2:10
+                    vfile = eval(['value(VideoFile',num2str(i),')']);
+                    if exist(vfile,'file') == 2
+                        [v_pname,v_fname,ext] = fileparts(vfile);
+                        new_vfile = ['video',fname(5:end),num2str(i),ext];
+                        system(['rename ',vfile,' ',new_vfile]);
+                        eval(['VideoFile',num2str(i),'.value = [v_pname,filesep,new_vfile];'])
+                    
+                        vidpos = strfind(v_pname,'Video');
+                        bfile = ['X:\RATTER\',v_pname(vidpos:end),filesep,v_fname,ext];
+                        if exist(bfile,'file') == 2
+                            system(['rename ',bfile,' ',new_vfile]);
+                            NewVideoFile = ['X:\RATTER\',v_pname(vidpos:end),filesep,new_vfile];
+                            eval(['VideoFile',num2str(i),'.value = NewVideoFile;']);
+                        end
+                    else
+                        break
+                    end
+                end
             catch
                 disp('ERROR: failure to rename video file')
             end
@@ -2023,61 +2159,74 @@ switch action
             %if the protocol has a pre_saving_settings section, call it
             try
                 feval(value(CurrProtocol),protobj,'pre_saving_settings');
-            catch %#ok<CTCH>
+            catch me
+                runrats('email_owner',me)
                 disp('Protocol does not appeat to have a pre_saving_settings')
             end
             
-            SavingSection(protobj,'savesets','interactive',0);
+            try
+                SavingSection(protobj,'savesets','interactive',0);
+            catch me
+                %error in settings save
+                runrats('email_owner',me)
+            end
             
-            StatusBar.value=['Saved data file: ',fname]; %#ok<STRNU>
-            
-            set(get_ghandle(Multi),'String','Reloading');
-            dispatcher(value(dispobj),'set_protocol',''); %#ok<NODEF>
-            
-            %Let's reset the Multi button and hop back in the live loop
-            set(get_ghandle(Multi),'ForegroundColor',[0,0,0],'BackgroundColor',...
-                [1,1,0.4],'string','Load Protocol','FontSize',24);
-            InLiveLoop.value = 1; %#ok<STRNU>
-            runrats(obj,'enable_all');
-            
-            %We need to turn RunRats back to live mode
-            h = value(PanelBack); %#ok<NODEF>
-            for i = 1:length(h)
-                try %#ok<TRYNC>
-                    if strcmp(get(h(1),'type'),'figure')
-                        set(h(i),'Color',[1,0.8,0.6]);
-                    else
-                        set(h(i),'BackgroundColor',[1,0.8,0.6]);
+            try
+                crash_hang = 0;
+                StatusBar.value=['Saved data file: ',fname]; %#ok<STRNU>
+
+                set(get_ghandle(Multi),'String','Reloading');
+                dispatcher(value(dispobj),'set_protocol',''); %#ok<NODEF>
+
+                %Let's reset the Multi button and hop back in the live loop
+                set(get_ghandle(Multi),'ForegroundColor',[0,0,0],'BackgroundColor',...
+                    [1,1,0.4],'string','Load Protocol','FontSize',24);
+                InLiveLoop.value = 1; %#ok<STRNU>
+                runrats(obj,'enable_all');
+
+                %We need to turn RunRats back to live mode
+                h = value(PanelBack); %#ok<NODEF>
+                for i = 1:length(h)
+                    try %#ok<TRYNC>
+                        if strcmp(get(h(1),'type'),'figure')
+                            set(h(i),'Color',[1,0.8,0.6]);
+                        else
+                            set(h(i),'BackgroundColor',[1,0.8,0.6]);
+                        end
                     end
                 end
-            end
-            set(get_ghandle(UpdateMode),'String','Live Update On','BackgroundColor',[0.6 1 0.6],'ForegroundColor',[0 0 0]);
-            
-            %Another option is to now kill MatLab completely and restart
-            %runrats.  This ensures windows don't pile up, and code can get
-            %updated before each session. Before we restart Matlab let's
-            %see if we're coming in from a crash and if so, how long since
-            %the previous crash.
-            
-            crash_hang = 0;
-            if strcmp(value(InputArgs),'no_reboot')
-                %We're comming in from a crash. We want to quickly reload
-                %the protocol so if this is a session where the rig would
-                %full reboot let's not do that
-                okay_to_reboot = 0;
-                if exist(value(AutoLoadFile),'file')
-                    load(value(AutoLoadFile));
+                set(get_ghandle(UpdateMode),'String','Live Update On','BackgroundColor',[0.6 1 0.6],'ForegroundColor',[0 0 0]);
+
+                %Another option is to now kill MatLab completely and restart
+                %runrats.  This ensures windows don't pile up, and code can get
+                %updated before each session. Before we restart Matlab let's
+                %see if we're coming in from a crash and if so, how long since
+                %the previous crash.
+
+                if strcmp(value(InputArgs),'no_reboot')
+                    %We're comming in from a crash. We want to quickly reload
+                    %the protocol so if this is a session where the rig would
+                    %full reboot let's not do that
+                    okay_to_reboot = 0;
+                    if exist(value(AutoLoadFile),'file')
+                        load(value(AutoLoadFile));
+                    end
+                    if ~exist('last_crash_time','var')
+                        last_crash_time = 0;
+                    end
+
+                    if (now - last_crash_time) * (24*60) < 20
+                        %It's been less than 20 minutes since the last crash
+                        crash_hang = 1;
+                    end 
+                else
+                    okay_to_reboot = 1;
                 end
-                if ~exist('last_crash_time','var')
-                    last_crash_time = 0;
-                end
-                
-                if (now - last_crash_time) * (24*60) < 20
-                    %It's been less than 20 minutes since the last crash
-                    crash_hang = 1;
-                end 
-            else
-                okay_to_reboot = 1;
+            catch me
+                %something went wrong while closing the protocol, don't
+                %know if we have to do anything here since we will restart
+                %matlab below.
+                runrats('email_owner',me)
             end
             
             if value(do_full_restart) == 1 && crash_hang == 0
@@ -2100,6 +2249,11 @@ switch action
                 if isnan(reboot_after_last_rat)
                     reboot_after_last_rat = 1;
                 end
+                
+                never_reboot = bSettings('get','RUNRATS','never_reboot');
+                if isnan(never_reboot)
+                    never_reboot = 0;
+                end
                     
                 more_to_train = 0;
                 if reboot_after_last_rat == 1
@@ -2115,7 +2269,8 @@ switch action
                     end
                 end
                 
-                if (value(CurrSession) == 9 || (reboot_after_last_rat == 1 && more_to_train == 0)) && okay_to_reboot    
+                if (value(CurrSession) == 8 || (reboot_after_last_rat == 1 && more_to_train == 0)) &&...
+                        okay_to_reboot == 1 && never_reboot == 0    
                     %We just finished session 9 or we reboot after the last rat and there
                     %are no more rats so let's do a full reboot as long as
                     %we did not set InputArgs to 'no_reboot'
@@ -2138,7 +2293,7 @@ switch action
                     p = [p,'Rigscripts'];
                     cd(p);
                     
-                    try %#ok<TRYNC>
+                    try
                         if ispc == 1
                             if isempty(varargin) || isempty(varargin{1})
                                 ratname = ''; %#ok<NASGU>
@@ -2155,6 +2310,8 @@ switch action
                         else
                             system('./start_runrats.sh');
                         end
+                    catch
+                        system('restart_runrats.bat');
                     end
                 end
             end
@@ -2173,8 +2330,8 @@ switch action
     case 'reboot'
         %% reboot
         %This is designed to execute once each day, either when the session
-        %9 rat is done training or if this rig is not running a rat in
-        %session 9, when it sees that session 9 is nearning completion.
+        %8 rat is done training or if this rig is not running a rat in
+        %session 8, when it sees that session 9 is nearning completion.
         runrats(obj,'updatelog','reboot');
         try %#ok<TRYNC>
             try %#ok<TRYNC>
@@ -2195,7 +2352,10 @@ switch action
             
             %put code here you'd like to run each night before the reboot
             try %#ok<TRYNC>
-                upload_delete_old_video;
+                %Stop deleting old video until we can fix the corrupted
+                %files on Cup
+                upload_delete_old_video(30);
+                check_video_hash('C:\ratter\Video\','','',1);
             end
             
             cd(bSettings('get','GENERAL','Rigscripts_Directory'))
@@ -2289,9 +2449,9 @@ switch action
         runrats(obj,'end_video');
             
         if ~isempty(varargin) && iscell(varargin) && strcmp(class(varargin{1}),'MException') %#ok<STISA>
-            lsterr = varargin{1};
+            lsterr = [varargin{1}];
         else
-            lsterr = lasterror; %#ok<LERR>
+            lsterr = [lasterror]; %#ok<LERR>
         end
         
         %Let's stop dispatcher
@@ -2302,12 +2462,23 @@ switch action
             message = cell(0);
             message{end+1} = ['Rig ',num2str(value(RigID)),' crashed while running ',value(LetMenu),sprintf('%03i',value(NumMenu)),' at ',datestr(now,13)]; %#ok<NODEF>
             message{end+1} = '';
-            message{end+1} = lsterr.message;
-            message{end+1} = '';
+            for i = 1:numel(lsterr)
+                message{end+1} = ['ERROR MESSAGE ',num2str(i)]; %#ok<AGROW>
+                message{end+1} = lsterr(i).message; %#ok<AGROW>
+                message{end+1} = ''; %#ok<AGROW>
             
-            for i = 1:length(lsterr.stack)
-                message{end+1} = [lsterr.stack(i).name,' at ',num2str(lsterr.stack(i).line)]; %#ok<AGROW>
+                for j = 1:length(lsterr(i).stack)
+                    message{end+1} = [lsterr(i).stack(j).name,' at ',num2str(lsterr(i).stack(j).line)]; %#ok<AGROW>
+                end
+                message{end+1} = ''; %#ok<AGROW>
             end
+            
+            message{end+1} = 'If there are 2 error messages, 1 is the original crash,';
+            message{end+1} = '2 is the crash during the attempt to recover from 1.';
+            message{end+1} = 'If both are the same your protocol likely experienced';
+            message{end+1} = '10 crashed trials in a row. Check crashed_history and';
+            message{end+1} = 'crashed_history_comments in the SoloData data file.';
+            
             
             IP = get_network_info;
             message{end+1} = ' ';
@@ -2358,6 +2529,46 @@ switch action
         
         
         
+    case 'email_owner'
+        %% email_owner
+        %something went wrong and we want to email the rat owner
+        
+        runrats(obj,'updatelog','Emailed Error');   
+        if ~isempty(varargin) && iscell(varargin) && strcmp(class(varargin{1}),'MException') %#ok<STISA>
+            lsterr = [varargin{1}];
+        else
+            lsterr = [lasterror]; %#ok<LERR>
+        end
+        
+        message = cell(0);
+        message{end+1} = ['Rig ',num2str(value(RigID)),' threw an error while saving ',value(LetMenu),sprintf('%03i',value(NumMenu)),' at ',datestr(now,13)]; %#ok<NODEF>
+        message{end+1} = '';
+        for i = 1:numel(lsterr)
+            message{end+1} = lsterr(i).message; %#ok<AGROW>
+            message{end+1} = ''; %#ok<AGROW>
+
+            for j = 1:length(lsterr(i).stack)
+                message{end+1} = [lsterr(i).stack(j).name,' at ',num2str(lsterr(i).stack(j).line)]; %#ok<AGROW>
+            end
+            message{end+1} = ''; %#ok<AGROW>
+        end
+        
+        set_email_sender
+            
+        owner = bdata(['select contact from ratinfo.rats where ratname="',value(LetMenu),sprintf('%03i',value(NumMenu)),'"']);
+        if ~isempty(owner)
+            owner = owner{1};
+            owner = [',',owner,','];
+            owner(owner == ' ') = '';
+            cms = find(owner == ',');
+
+            for i = 1:length(cms)-1
+                exp = owner(cms(i)+1:cms(i+1)-1);
+                sendmail([exp,'@princeton.edu'],[value(LetMenu),sprintf('%03i',value(NumMenu)),' Save Error'],message);
+            end
+        end
+        
+        
     case 'crash_cleanup'
         %% crash_cleanup
         %The tech has acknowledged the crash. Let's jump back in the loop
@@ -2375,7 +2586,7 @@ switch action
             %Close the MySQL connection
             try bdata('close'); end %#ok<TRYNC>
 
-            if value(CurrSession) == 9 %#ok<NODEF> %|| value(CurrSession) == 6 %#ok<NODEF>
+            if value(CurrSession) == 8 %#ok<NODEF> %|| value(CurrSession) == 6 %#ok<NODEF>
                 %We just finished session 9 so let's do a full reboot
                 runrats(obj,'reboot')
             else
@@ -2404,6 +2615,130 @@ switch action
         end
             
         runrats(obj,'live_loop');
+        
+        
+        
+    case 'copy_settings_files'
+        map_bucket_drive;
+        
+        rigid = bSettings('get','RIGS','Rig_ID');
+        cuppath = ['X:',filesep,'Training Room',filesep,...
+            'Settings',filesep,'Rig',num2str(rigid),filesep];
+        
+        exppath = bSettings('get','GENERAL','Main_Code_Directory');
+        if exppath(end) == filesep
+            exppath = exppath(1:end-1);
+        end
+        expsettings = [exppath,filesep,'Settings'];
+        expsetfiles = dir(expsettings);
+        
+        cupdir = [cuppath,'ExperPort'];
+        if ~exist(cupdir,'dir')
+            mkdir(cupdir);
+        end
+
+        for i = 1:numel(expsetfiles)
+            %Copy ExperPort Settings to Cup
+            if expsetfiles(i).isdir == 0
+                [pname,fname,ext] = fileparts(expsetfiles(i).name);
+                if strcmp(ext,'.conf')
+                    %Copy this file
+                    try
+                        copyfile([expsettings,filesep,expsetfiles(i).name],...
+                             [cupdir,filesep,expsetfiles(i).name],'f');
+                    catch
+                        disp(['WARNING: Unable to copy ',expsetfiles(i).name]);
+                    end
+                end
+            end
+        end
+
+        runratsettings = [exppath,filesep,'Modules',filesep,'@runrats'];
+        runratsetfiles = dir(runratsettings);
+        
+        cupdir = [cuppath,'Runrats'];
+        if ~exist(cupdir,'dir')
+            mkdir(cupdir);
+        end
+
+        for i = 1:numel(runratsetfiles)
+            %Copy Runrats Settings to Cup
+            if runratsetfiles(i).isdir == 0
+                [pname,fname,ext] = fileparts(runratsetfiles(i).name);
+                if strcmp(ext,'.txt') || strcmp(ext,'.mat')
+                    %Copy this file
+                    try
+                        copyfile([runratsettings,filesep,runratsetfiles(i).name],...
+                             [cupdir,filesep,runratsetfiles(i).name],'f');
+                    catch
+                        disp(['WARNING: Unable to copy ',runratsetfiles(i).name]);
+                    end
+                end
+            end
+        end
+
+        if bSettings('get','RIGS','bpod')
+            bpodpath = bSettings('get','GENERAL','Bpod_Code_Directory');
+            if bpodpath(end) == filesep
+                bpodpath = bpodpath(1:end-1);
+            end
+            bpodsettings = [bpodpath,filesep,'Bpod Local\Settings'];
+            bpodsetfiles = dir(bpodsettings);
+
+            cupdir = [cuppath,'Bpod'];
+            if ~exist(cupdir,'dir')
+                mkdir(cupdir);
+            end
+
+            for i = 1:numel(bpodsetfiles)
+                %Copy Bpod Settings to Cup
+                if bpodsetfiles(i).isdir == 0
+                    [pname,fname,ext] = fileparts(bpodsetfiles(i).name);
+                    if strcmp(ext,'.mat')
+                        %Copy this file
+                        try
+                            copyfile([bpodsettings,filesep,bpodsetfiles(i).name],...
+                                 [cupdir,filesep,bpodsetfiles(i).name],'f');
+                        catch
+                            disp(['WARNING: Unable to copy ',bpodsetfiles(i).name]);
+                        end     
+                    end
+                end
+            end
+        end
+        
+        calibpath = bSettings('get','GENERAL','Protocols_Directory');
+        if calibpath(end) == filesep
+            calibpath = calibpath(1:end-1);
+        end
+        
+        if bSettings('get','RIGS','bpod')
+            calibsettings = [calibpath,filesep,'@WaterCalibrationBPod'];
+        else
+            calibsettings = [calibpath,filesep,'@WaterCalibration'];
+        end
+        calibsetfiles = dir(calibsettings);
+        
+        cupdir = [cuppath,'Calibration'];
+        if ~exist(cupdir,'dir')
+            mkdir(cupdir);
+        end
+        
+        for i = 1:numel(calibsetfiles)
+            %Copy Calibration Settings to Cup
+            if calibsetfiles(i).isdir == 0
+                [pname,fname,ext] = fileparts(calibsetfiles(i).name);
+                if strcmp(ext,'.mat')
+                    %Copy this file
+                    try
+                        copyfile([calibsettings,filesep,calibsetfiles(i).name],...
+                             [cupdir,filesep,calibsetfiles(i).name],'f');
+                    catch
+                        disp(['WARNING: Unable to copy ',calibsetfiles(i).name]);
+                    end     
+                end
+            end
+        end
         
         
         
@@ -2482,7 +2817,17 @@ switch action
         %If the Multi button exists, runrats has been loaded
         if exist('Multi','var'), obj = 1; else obj = 0; end
         
-    
+        
+        
+    case 'session_ended'
+        %% sesion_ended
+        %return the value of SessionEnded
+        if exist('SessionEnded','var') == 0
+            obj = nan;
+        else
+            obj = value(SessionEnded);
+        end
+        
         
     case 'get_videofile'
         %% get_videofile
@@ -2519,6 +2864,8 @@ switch action
         %Closes runrats
         
         runrats(obj,'close_gui_only');
+        
+        try send_n_done_trials(obj,'reset'); end %#ok<TRYNC>
         
         try
             dispatcher(value(dispobj),'close'); %#ok<NODEF>
