@@ -2,6 +2,7 @@ function pbups_psych_data = pbups_psych_internal(protocol_data,varargin)
         %% parse and validate inputs
         p=inputParser;
         p.KeepUnmatched=true;
+        p.PartialMatching=false;
         p.addParamValue('sessNumber',NaN,@(x)validateattributes(x,{'numeric'},{}));
         p.addParamValue('subplotNo',[1 1 1],@(x)validateattributes(x,{'numeric'},{'positive','integer'}));
         p.addParamValue('axis',1,@(x)validateattributes(x,{'numeric'},{'scalar','positive','integer'}));        
@@ -26,7 +27,7 @@ function pbups_psych_data = pbups_psych_internal(protocol_data,varargin)
             PB_set_constants;
         end
         params.positive_choice = validatestring(params.positive_choice,{'right','left','ipsi'},'','positive_choice');        
-        params.xval = validatestring(params.xval,{'gamma','bupDiff'},'','xval');
+        params.xval = validatestring(params.xval,{'gamma','bupDiff','log_click_ratio','rl_prob_diff'},'','xval');
         params.normalization = validatestring(params.normalization,{'none','totalBups'},'','normalization');    
         %% get the session(s) asked for, chop the protocol_data structure accordingly, and extract relevant fields        
         if ~ismember('sessNumber',p.UsingDefaults)
@@ -84,11 +85,11 @@ function pbups_psych_data = pbups_psych_internal(protocol_data,varargin)
             case 'gamma'
                 switch params.positive_choice
                     case 'left'
-                        levelname = '\gamma, i.e. log(left click rate) - log(right click rate)';
+                        levelname = '\gamma, i.e. log(L/R click rate)';
                     case 'right'
-                        levelname = '\gamma, i.e. log(right click rate) - log(left click rate)';                    
+                        levelname = '\gamma, i.e. log(R/L click rate)';                    
                     case 'ipsi'
-                        levelname = '\gamma, i.e. log(ipsi click rate) - log(contra click rate)';                    
+                        levelname = '\gamma, i.e. log(ipsi/contra click rate)';                    
                 end
                 signals=parsedProtocolData.gammas;
             case 'bupDiff'
@@ -97,13 +98,13 @@ function pbups_psych_data = pbups_psych_internal(protocol_data,varargin)
                     case 'none'
                         switch params.positive_choice
                             case 'left'
-                                levelname = 'Click Difference (L-R)';                        
+                                levelname = 'Click Difference (#L-#R)';                        
                             case 'right'
-                                levelname = 'Click Difference (R-L)';                                                    
+                                levelname = 'Click Difference (#R-#L)';                                                    
                             case 'ipsi'
                                 levelname = 'Click Difference (ipsi-contra)';
                         end
-                    case 'totalBups'
+                    case 'total'
                         warning('off','MATLAB:divideByZero');
                         signals = signals./parsedProtocolData.totalBups;
                         warning('on','MATLAB:divideByZero');                        
@@ -117,6 +118,27 @@ function pbups_psych_data = pbups_psych_internal(protocol_data,varargin)
                                 levelname = 'Normalized Click Difference (ipsi-contra)/(ipsi+contra)';                                                                                    
                         end
                 end
+            case 'log_click_ratio'
+                switch params.positive_choice
+                    case 'right'
+                        levelname = 'log ( #R / #L )';
+                    case 'left'
+                        levelname = 'log ( #L / #R )';                    
+                    case 'ipsi'
+                        levelname = 'log ( #ipsi / #contra )';       
+                end
+                signals = log(parsedProtocolData.nright ./ parsedProtocolData.nleft);
+                
+            case 'rl_prob_diff'
+                switch params.positive_choice
+                    case 'right'
+                        levelname = 'R - L reward prob.';
+                    case 'left'
+                        levelname = 'L - R reward prob.';                 
+                    case 'ipsi'
+                        levelname = 'ipsi - contra reward prob';     
+                end
+                signals = parsedProtocolData.RR_right_reward_prob - parsedProtocolData.RR_left_reward_prob;
         end               
         %% if any FC or side LED trials, add "special values" to plot  
         extraSignal = abs(parsedProtocolData.gammas)>90;
@@ -126,7 +148,7 @@ function pbups_psych_data = pbups_psych_internal(protocol_data,varargin)
             leftLED = extraSignal & parsedProtocolData.sides=='l' | strcmp(parsedProtocolData.hemisphere,'left');
             rightLED = extraSignal & parsedProtocolData.sides=='r' | strcmp(parsedProtocolData.hemisphere,'left');
         end
-        freeChoice = parsedProtocolData.sides=='f'; 
+        freeChoice = parsedProtocolData.sides=='f' & parsedProtocolData.reward_type~="r"; 
         if ~params.plotSpecial
            freeChoice=false;
            leftLED=false;
@@ -334,6 +356,10 @@ function pbups_psych_data = pbups_psych_internal(protocol_data,varargin)
                 pbups_psych_data.violationRate=parsedProtocolData.violationRate;
             end
             pbups_psych_data.parsedProtocolData=parsedProtocolData;
-            pbups_psych_data.percentCorrect = parsedProtocolData.percentCorrect;                    
+            if isfield(parsedProtocolData,'percentCorrect')
+                pbups_psych_data.percentCorrect = parsedProtocolData.percentCorrect;                    
+            else
+                pbups_psych_data.percentCorrect=NaN;
+            end
         end
 end
