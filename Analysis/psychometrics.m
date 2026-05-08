@@ -56,7 +56,7 @@ function data = psychometrics(varargin)
     p.addParamValue('nPsychBins',Inf,@(x)validateattributes(x,{'numeric'},{'scalar'}));
     p.addParamValue('binEdges',[],@(x)validateattributes(x,{'numeric'},{}));
     p.addParamValue('varDotSizeNormalization',1,@(x)validateattributes(x,{'numeric'},{'positive','scalar','finite'}));
-    p.addParamValue('binMode','equal range');
+    p.addParamValue('binMode','symmetric');
     p.parse(varargin{:});
     params=p.Results;   
     params.fitType = validatestring(params.fitType,{'probit','logit','cumgauss'},'psychometrics','fitType');
@@ -182,6 +182,10 @@ function data = psychometrics(varargin)
                     case 'equal number'
                         quantiles = (1:params.nPsychBins-1)/params.nPsychBins;
                         edges=[min(data.signals)-eps(min(data.signals)),prctile(data.signals(:)',100*quantiles),max(data.signals)+eps(max(data.signals))];
+                    case 'symmetric'
+                        mx = max(abs(data.signals));
+                        mx=mx+eps(mx);
+                        edges = linspace(-mx,mx,params.nPsychBins+1);
                 end
                 [tmp,idx] = histc(data.signals,edges);
             end
@@ -191,16 +195,8 @@ function data = psychometrics(varargin)
         end
         if ~isinf(params.nPsychBins)
             idx = idx(:);            
-            for i=1:length(idx)
-                if isempty(data.signals(idx==i))
-                    binMids(i)=NaN;
-                else
-                    binMids(i) = mean(data.signals(idx==i));
-                end
-            end
-            binMids = binMids(:);
-            %binMids = diff(edges)/2+edges(1:end-1);
-            data.signals=binMids(idx);
+            binMids = (edges(2:end) + edges(1:end-1) ) / 2;
+            data.signals=binMids(idx)';
             data.binEdges = edges;
         else
             data.binEdges=[];
@@ -282,37 +278,20 @@ function data = psychometrics(varargin)
         if numel(data.originalXs)<4
             warning('psychometrics:lessThanFour','Less than four unique x-values. No point trying to fit a sigmoid.');
         else            
-            try
-                orig_state=warning;
-                warning('off');
-                nlinfit(1,1,@(x,b)x*b,0,'Weights',@(x)x+2);
-                data.params.useIRLS = true;
-            catch
-                data.params.useIRLS = false;                
-            end
-            warning(orig_state); 
             data.params = makeModelFun(data);     
-            data.params.beta0=initializeModelParams(data.originalXs,data.originalUprate,data.originalNx,data.params.fitParams);              
-            if data.params.useIRLS
-               [data.params.mdl.Coefficients.Estimate,data.params.mdl.Residuals,data.params.mdl.Jacobian,...
-                    data.params.mdl.CovB,data.params.mdl.MSE,data.params.mdl.ErrorModelInfo]  = ...
-                    nlinfit(data.originalSignals,data.choices,data.params.modelFun,data.params.beta0);
-                data.params.mdl.Coefficients.SE = ...
-                    nlparci(data.params.mdl.Coefficients.Estimate,data.params.mdl.Residuals,'covar',data.params.mdl.CovB,'alpha',0.05);
+            data.params.beta0=initializeModelParams(data.originalXs,data.params.fitParams);              
+            if hastoolbox('optimization')
+                %warning_state=warning('off');
+                [data.params.mdl.Coefficients.Estimate,data.params.mdl.logL,data.params.mdl.exitflag,...
+                    data.params.mdl.output,data.params.mdl.lambda,data.params.mdl.grad,data.params.mdl.hessian] = ...
+                    fmincon(data.params.modelFun,data.params.beta0,data.params.A,data.params.b,[],[],data.params.lb,data.params.ub,[],optimset('display','off'));
+                %warning(warning_state);
             else
-                if hastoolbox('optimization')
-                    warning_state=warning('off');
-                    [data.params.mdl.Coefficients.Estimate,data.params.mdl.logL,data.params.mdl.exitflag,...
-                        data.params.mdl.output,data.params.mdl.lambda,data.params.mdl.grad,data.params.mdl.hessian] = ...
-                        fmincon(data.params.modelFun,data.params.beta0,[],[],[],[],data.params.lb,data.params.ub,[],optimset('display','off'));
-                    warning(warning_state);
-                else
-                    [data.params.mdl.Coefficients.Estimate,data.params.mdl.logL,data.params.mdl.exitflag,...
-                        data.params.mdl.output] = ...
-                        fminsearch(data.params.modelFun,data.params.beta0);
-                end
-                data.params.mdl.Coefficients.SE = zeros(size(data.params.fitParams));    
+                [data.params.mdl.Coefficients.Estimate,data.params.mdl.logL,data.params.mdl.exitflag,...
+                    data.params.mdl.output] = ...
+                    fminsearch(data.params.modelFun,data.params.beta0);
             end
+            data.params.mdl.Coefficients.SE = zeros(size(data.params.fitParams));    
         end
         if isfield(data.params,'fitParams')
             for f=1:length(data.params.fitParams)
@@ -372,12 +351,7 @@ function data = psychometrics(varargin)
         end
         set(data.dataHandle,'HandleVisibility','off');
         if data.params.errorbar % error bar
-            v=version;
-            if str2num(v(1:3))<8.4
-                errorbarfun = @(xs,uprate,ci,color)errorbar(xs,uprate,(uprate-ci(:,1))/2,(ci(:,2)-uprate)/2,'.','LineStyle','none','MarkerSize',0.01,'LineWidth',1.75,'color',color);                
-            else
-                errorbarfun = @(xs,uprate,ci,color)errorbar(xs,uprate,(uprate-ci(:,1))/2,(ci(:,2)-uprate)/2,'.','LineStyle','none','MarkerSize',0.01,'LineWidth',1.75,'color',color,'CapSize',0);
-            end
+            errorbarfun = @(xs,uprate,ci,color)errorbar(xs,uprate,(uprate-ci(:,1))/2,(ci(:,2)-uprate)/2,'.','LineStyle','none','MarkerSize',0.01,'LineWidth',1.75,'color',color,'CapSize',0);
             data.dataErrorHandle=errorbarfun(data.xs,data.uprate,data.ci,data.params.color);
             for i=1:length(data.specialVals)
                 if data.specialNx(i)==0
@@ -404,16 +378,15 @@ function data = psychometrics(varargin)
         xlabel(data.levelname);
         if data.params.fit && isfield(data.params,'mdl') % plot fit if requested
             hold on;
-            dataRange = linspace(min(data.originalXs),max(data.originalXs),100);
-            if data.params.useIRLS
-                if isa(data.params.mdl,'NonLinearModel')
-                    [y_hat,y_hat_ci] = data.params.mdl.predict(dataRange(:),'alpha',data.params.alpha);
+            dataRange = linspace(min(data.originalSignals),max(data.originalSignals),50);                
+            if data.params.fitLapse
+                if data.params.fitBias
+                    y_hat = data.params.psychoFun(dataRange(:),data.criterion(1),data.dispersion(1),data.lapse(1),data.bias(1));
                 else
-                    [y_hat,y_hat_ci] = nlpredci(data.params.modelFun,dataRange(:),data.params.mdl.Coefficients.Estimate,data.params.mdl.Residuals,'Covar',data.params.mdl.CovB,'alpha',0.05);
-                    y_hat_ci = bsxfun(@plus,[-1 ;1]*y_hat_ci', y_hat')';
+                    y_hat = data.params.psychoFun(dataRange(:),data.criterion(1),data.dispersion(1),data.lapse(1),0);                    
                 end
             else
-                y_hat = data.params.psychoFun(dataRange(:),data.criterion(1),data.dispersion(1),data.lapse(1),data.bias(1));
+                y_hat = data.params.psychoFun(dataRange(:),data.criterion(1),data.dispersion(1),0,0);                
             end
             if data.params.errorbar && any(data.params.mdl.Coefficients.SE(:))
                 try
@@ -477,13 +450,6 @@ function data = psychometrics(varargin)
         data.specialHandle=[];
         data.fitHandle=[];
     end
-    if params.plot
-        versionNo = version;
-        versionNo = str2num(versionNo(1:3));
-        if versionNo<9
-            set(gcf,'renderer','zbuffer');
-        end    
-    end
 end
 
 
@@ -492,70 +458,52 @@ function params = makeModelFun(data)
     switch params.fitType
         case 'probit' % equation for a probit function with variable lapse rate and criterion
             params.psychoFun = @(x,criterion,dispersion,lapse,bias) ...
-                bias + lapse + (1-2*lapse).*( 1 + erf ( ( x - criterion ) ./ ( sqrt(2) * dispersion ) ) ) ./ 2;
+                min(1-eps,max(eps,bias + lapse/2 + (1-lapse).*( 1 + erf ( ( x - criterion ) ./ ( sqrt(2) * dispersion ) ) ) ./ 2));
         case 'logit' % equation for a logistic function with variable lapse rate and criterion
             params.psychoFun = @(x,criterion,dispersion,lapse,bias) ...
-                bias + lapse + (1-2*lapse) ./ ( 1 + exp ( ( criterion - x ) ./ dispersion ) );
+               min(1-eps,max(eps, bias + lapse/2 + (1-lapse) ./ ( 1 + exp ( - (x - criterion )./dispersion ) )   ));               
     end  
     params.fitParams = {'criterion','dispersion','lapse','bias'};
-    if ~params.useIRLS
-        params.lb = [-Inf 0 0 -0.5];
-        params.ub = [Inf Inf 1 0.5];
-    end
+    params.lb = [-Inf eps 0 -1];
+    params.ub = [Inf Inf 1 1];
+    params.A = [];
+    params.b=[];
     if params.fitBias
         if params.fitLapse
-            if params.useIRLS
-                params.modelFun = @(beta,x)params.psychoFun(x,beta(1),beta(2),beta(3),beta(4));
-            else
-                params.modelFun = @(beta) -sum(log(max(eps,params.psychoFun(data.originalSignals(data.choices==1),beta(1),beta(2),beta(3),beta(4))))) ...
-                    - sum( log(max(eps,1-params.psychoFun(data.originalSignals(data.choices==0),beta(1),beta(2),beta(3),beta(4)))));
-            end                
+           params.modelFun = @(beta) -sum(log(params.psychoFun(data.originalSignals(data.choices==1),beta(1),beta(2),beta(3),beta(4)))) ...
+               - sum( log(1-params.psychoFun(data.originalSignals(data.choices==0),beta(1),beta(2),beta(3),beta(4))));
+           params.A = [0 0 -1 2];
+           params.b=0;
         else
-            if params.useIRLS
-                params.modelFun = @(beta,x)params.psychoFun(x,beta(1),beta(2),0,beta(3));
-            else
-                params.modelFun = @(beta) -sum(log(max(eps,params.psychoFun(data.originalSignals(data.choices==1),beta(1),beta(2),0,beta(3))))) ...
-                    - sum( log(max(eps,1-params.psychoFun(data.originalSignals(data.choices==0),beta(1),beta(2),0,beta(3)))));
-                params.lb = params.lb([1 2 4]);
-                params.ub = params.ub([1 2 4]);                
-            end
-            params.fitParams = params.fitParams(~ismember(params.fitParams,'lapse'));
-        end
-    elseif params.fitLapse
-        if params.useIRLS
-            params.modelFun = @(beta,x)params.psychoFun(x,beta(1),beta(2),beta(3),0);
-        else
-            params.modelFun = @(beta) -sum(log(max(eps,params.psychoFun(data.originalSignals(data.choices==1),beta(1),beta(2),beta(3),0)))) ...
-                -sum( log(max(eps,1-params.psychoFun(data.originalSignals(data.choices==0),beta(1),beta(2),beta(3),0))));
-            params.lb = params.lb([1 2 3]);
-            params.ub = params.ub([1 2 3]);               
-        end
-        params.fitParams = params.fitParams(~ismember(params.fitParams,'bias'));                  
-    else
-        if params.useIRLS
-            params.modelFun = @(beta,x)params.psychoFun(x,beta(1),beta(2),0,0);
-        else
-            params.modelFun = @(beta) -sum(log(max(eps,params.psychoFun(data.originalSignals(data.choices==1),beta(1),beta(2),0,0)))) ...
-                -sum( log(max(eps,1-params.psychoFun(data.originalSignals(data.choices==0),beta(1),beta(2),0,0))));
+            params.modelFun = @(beta) -sum(log(params.psychoFun(data.originalSignals(data.choices==1),beta(1),beta(2),0,0))) ...
+                -sum( log(1-params.psychoFun(data.originalSignals(data.choices==0),beta(1),beta(2),0,0)));
             params.lb = params.lb([1 2]);
             params.ub = params.ub([1 2]);               
+            params.fitParams = params.fitParams(~ismember(params.fitParams,{'bias','lapse'}));  
         end
+    elseif params.fitLapse
+        params.modelFun = @(beta) -sum(log(params.psychoFun(data.originalSignals(data.choices==1),beta(1),beta(2),beta(3),0))) ...
+            -sum( log(1-params.psychoFun(data.originalSignals(data.choices==0),beta(1),beta(2),beta(3),0)));
+        params.lb = params.lb([1 2 3]);
+        params.ub = params.ub([1 2 3]);               
+        params.fitParams = params.fitParams(~ismember(params.fitParams,'bias'));                  
+    else
+        params.modelFun = @(beta) -sum(log(params.psychoFun(data.originalSignals(data.choices==1),beta(1),beta(2),0,0))) ...
+            -sum( log(1-params.psychoFun(data.originalSignals(data.choices==0),beta(1),beta(2),0,0)));
+        params.lb = params.lb([1 2]);
+        params.ub = params.ub([1 2]);               
         params.fitParams = params.fitParams(~ismember(params.fitParams,{'bias','lapse'}));                       
     end
     data.params=params;
 end
 
 
-function beta0 = initializeModelParams(xs,uprate,nx,fitParams)
+function beta0 = initializeModelParams(xs,fitParams)
    for i=1:length(fitParams)
        if strcmp(fitParams{i},'dispersion')
-           beta0(i) = range(xs)./4;
-       elseif strcmp(fitParams{i},'criterion')
-           beta0(i)=0;
-       elseif strcmp(fitParams{i},'lapse')
-           beta0(i)=min([uprate;1-uprate]);
-       elseif strcmp(fitParams{i},'bias')
-           beta0(i)=wmean(uprate,nx)-0.5;
+           beta0(i) = range(xs)./10;
+       else
+           beta0(i) = 0;
        end
    end
 end

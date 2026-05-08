@@ -27,7 +27,7 @@ function parsedProtocolData = parseProtocolData(protocol_data,varargin)
     parsedProtocolData = struct('sides',[],'hits',[],'violations',[],'cpoke_tups',[],'bupDiffs',[],'totalBups',[],...
         'gammas',[],'choices',[],'stim_duration',[],'bupsdata',[],'leftbups',[],'rightbups',[],...
         'min_ISI_left',[],'min_ISI_right',[],'min_ISI_correct',[],'nleft',[],'nright',[],'is_user_defined_bup',[],...
-        'stimdata',[],'ratname','','sessid',[],'sessiondate','','cookingTime',[]);      
+        'stimdata',[],'ratname','','sessid',[],'sessiondate','','cookingTime',[],'RR_right_reward_prob',[],'RR_left_reward_prob',[],'reward_type',[]);      
     if isempty(protocol_data.pd)
         warning('Empty protocol data.');
         return
@@ -47,7 +47,7 @@ function parsedProtocolData = parseProtocolData(protocol_data,varargin)
         sessiondate = cell(length(hits),1);
         if isfield(protocol_data,'ratname')
             if iscell(protocol_data.ratname)
-                ratname(:) = protocol_data.ratname(i);
+                ratname = protocol_data.ratname(i);
             else
                 ratname = {protocol_data.ratname};            
             end        
@@ -55,6 +55,8 @@ function parsedProtocolData = parseProtocolData(protocol_data,varargin)
         if exist('cerebro_rats','var') && ismember(ratname{1},cerebro_rats)
             implant = cerebro_implants.(ratname{1});            
             cookingTime = repmat(round(days(datetime(datestr(protocol_data.sessiondate{i}))-datetime(datestr(implant.surgery_date)))),length(hits),1);
+        else
+            cookingTime = repmat(NaN,length(hits),1);
         end
         if isfield(protocol_data,'sessiondate')
             sessiondate(:) = protocol_data.sessiondate(i);
@@ -63,12 +65,23 @@ function parsedProtocolData = parseProtocolData(protocol_data,varargin)
             parsedProtocolData.violationRate(i)=NaN;
             continue
         end
+        
+        if isfield(protocol_data.pd{i},'reward_type')
+            reward_type=string(categorical(protocol_data.pd{i}.reward_type));
+            reward_type(reward_type=="reward_reversal")="r";
+        else
+            reward_type = repmat(string(""),numel(hits),1);
+        end
+        
+        
+        
+        
         sides = protocol_data.pd{i}.sides;
         violations = protocol_data.pd{i}.violations;   
         if ~isfield(protocol_data.pd{i},'cpoke1_tups')
             cpoke_tups = false(size(violations));
         else
-            cpoke_tups = protocol_data.pd{i}.cpoke1_tups;
+            cpoke_tups = protocol_data.pd{i}.cpoke1_tups~=0;
         end
         if isfield(protocol_data.pd{i},'stimdata')
             stimdata = protocol_data.pd{i}.stimdata;
@@ -132,6 +145,15 @@ function parsedProtocolData = parseProtocolData(protocol_data,varargin)
         rightbups=cellfun(@(x)x.right,bupsdata,'UniformOutput',false);               
         nleft = protocol_data.pd{i}.n_left;
         nright = protocol_data.pd{i}.n_right;        
+        if isfield(protocol_data.pd{i},'RR_right_reward_prob')
+            RR_right_reward_prob = protocol_data.pd{i}.RR_right_reward_prob;
+            RR_left_reward_prob = protocol_data.pd{i}.RR_left_reward_prob;      
+            RR_right_reward_prob = cat(1,RR_right_reward_prob{:});
+            RR_left_reward_prob = cat(1,RR_left_reward_prob{:});
+        else
+            RR_left_reward_prob=nleft*NaN;
+            RR_right_reward_prob=nleft*NaN;            
+        end
         totalBups = nright+nleft;   
         bupDiffs = nright-nleft;
         min_ISI_correct = NaN(size(min_ISI_left));
@@ -182,7 +204,9 @@ function parsedProtocolData = parseProtocolData(protocol_data,varargin)
                                 eval([fieldNames{f},' = ',fieldNames{f},'(pdInds2Keep);']);
                            end
                        else
+                           if ~isscalar(eval(fieldNames{f}))
                             eval([fieldNames{f},' = ',fieldNames{f},'(pdInds2Keep);']);
+                           end
                        end                           
                    end  
                    nanInds = nanInds(pdInds2Keep);                    
@@ -215,6 +239,7 @@ function parsedProtocolData = parseProtocolData(protocol_data,varargin)
         if isfinite(params.maxTotalBups)
             badTrials = badTrials | abs(totalBups)>params.maxTotalBups;
         end  
+        violations = isnan(hits);
         violationRate = sum(violations)./length(violations);
         percentCorrect = nansum(hits)./length(hits);
         if params.removeViolations
@@ -232,6 +257,17 @@ function parsedProtocolData = parseProtocolData(protocol_data,varargin)
         fieldNames = setdiff(fieldNames,'ratname');
         for f=1:length(fieldNames) 
             if exist(fieldNames{f},'var')
+                % eva debug
+                % v = eval(fieldNames{f});
+                % fprintf('%s: len=%d, badTrials len=%d\n', fieldNames{f}, numel(v), numel(badTrials));
+                
+                % Eva 2.17.2026: I removed stimdata for my protocol,
+                % without the following patch, 
+                % psychmetricSection will break for PredClick
+                if strcmp(fieldNames{f}, 'stimdata') && (isempty(stimdata) || numel(stimdata) ~= numel(badTrials))
+                    continue;
+                end
+                
                 eval([fieldNames{f},' = ',fieldNames{f},'(~badTrials);']);
                 parsedProtocolData.(fieldNames{f}) = cat(1,parsedProtocolData.(fieldNames{f}),eval(fieldNames{f}));
             end
@@ -256,7 +292,9 @@ function parsedProtocolData = parseProtocolData(protocol_data,varargin)
                 stimdata(i).power2 = stimdata(i).power(2);
             end
         end      
-        stimdata = rmfield(stimdata,'power');
+        if isfield(stimdata,'power')
+            stimdata = rmfield(stimdata,'power');
+        end
         if ~isempty(stimdata)
             fields = fieldnames(stimdata);
             for f=1:length(fields)
