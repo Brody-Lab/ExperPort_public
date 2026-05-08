@@ -29,7 +29,8 @@ try
                         %this rat that were not 'remove from free water'
                         %and set them back to those
                         
-                        mym(bdata,'update ratinfo.schedule set instructions="{S}" where schedentryid={S}',newinstruct,id(j));
+                        %mym(bdata,'update ratinfo.schedule set instructions="{S}" where schedentryid={S}',newinstruct,id(j));
+                        bdata('call ratinfo.update_schedule_instructions("{S}",{Si})',newinstruct,id(j));
                     end
                 end
             end

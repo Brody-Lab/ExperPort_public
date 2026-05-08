@@ -1,12 +1,16 @@
-function output = checkratweights(find_missing,extreme_only,varargin)
+function output = checkratweights(find_missing,extreme_only,ratrig,varargin)
 
 try 
-    
+    rng('shuffle','twister');
+
     if nargin < 1; find_missing = 0; end
     if nargin < 2; extreme_only = 0; end
+    if nargin < 3; ratrig       = []; end
     
-    ratrig = bSettings('get','RIGS','ratrig');
-    if isnan(ratrig); ratrig = 1; end
+    if isempty(ratrig)
+        ratrig = bSettings('get','RIGS','ratrig');
+        if isnan(ratrig); ratrig = 1; end
+    end
     
     istodaysunday = strcmp(datestr(now,'ddd'),'Sun');
     
@@ -36,6 +40,8 @@ try
     slots(   remrat) = [];
     
     recov = ratnames1(recoverings==1);
+    
+    colors = upper({'red','orange','yellow','green','blue','purple','magenta','cyan','black','white','brown','pink'});
     
     weighedrats = training;
     for r=1:length(training)
@@ -144,7 +150,6 @@ try
             ratname = ratnames{rattemp(r)};
             if sum(strcmp(notrealrats,ratname)) > 0; continue; end
             min_entries = 14;
-            
 
             %get the mass and days for this rat
             mass = []; 
@@ -227,6 +232,7 @@ try
             slow_steady_decline = 0;
             onedaychange = nan;
             %multidaychange = nan;
+            twoweekchange = nan;
             rr = [nan nan];
             pp = [nan nan];
             slope = nan;
@@ -248,7 +254,9 @@ try
                 if numel(goodmass) >= 30
                     for i = 1:17
                         [rtemp,ptemp] = corrcoef(gooddays(i:i+13),goodmass(i:i+13));
-                        if rtemp(2) < 0 && ptemp(2) < 0.05
+                        linefit = polyfit(gooddays(i:i+13),goodmass(i:i+13),1);
+                        percent_week_change = ((linefit(1) * 7) / mean(goodmass(i:i+13))) * 100;
+                        if rtemp(2) < 0 && ptemp(2) < 0.02 && percent_week_change <= -1.5
                             xtemp(i) = 1; %#ok<AGROW>
                         else
                             xtemp(i) = 0; %#ok<AGROW>
@@ -259,17 +267,19 @@ try
                     end
                 end
 
-                if onedaychange < -0.05 || twoweekchange < -0.1 || (rr(2) < 0 && pp(2) < 0.01 && slope(1) < -2);  
+                if onedaychange < -0.05 || twoweekchange < -0.1 || (rr(2) < 0 && pp(2) < 0.01 && slope(1) < -2) || slow_steady_decline == 1;  
                     weight_declining = 1; 
                 end
                 
-                if onedaychange < -0.06 || twoweekchange < -0.12 || (rr(2) < 0 && pp(2) < 0.01 && slope(1) < -3);
+                if onedaychange < -0.06 || twoweekchange < -0.12 || (rr(2) < 0 && pp(2) < 0.01 && slope(1) < -3) || slow_steady_decline == 1;
+                    weight_declining = 1; 
                     extreme_decline = 1;
                 else
                     extreme_decline = 0;
                 end
                 
                 if onedaychange < -0.1 || twoweekchange < -0.2 || slow_steady_decline == 1
+                    weight_declining = 1; 
                     extreme_decline = 1;
                     superextreme_decline = 1;
                     contains_superextreme_decline = 1;
@@ -288,7 +298,7 @@ try
                 
                     
                 if extreme_only == 1 && extreme_decline == 1
-                    if superextreme_decline == 1;
+                    if superextreme_decline == 1
                         message{end+1,1}  = [ratname,' EXTREME DECLINE'];                         %#ok<AGROW>
                     else
                         message{end+1,1}  = ratname;                                              %#ok<AGROW>
@@ -344,8 +354,36 @@ try
         if find_missing == 1; continue; end
         
         if ~isempty(message)   
+            if contains_superextreme_decline == 0 && extreme_only == 0 && rand(1) < 1/21
+                %find a spot between weight alerts and place a test
+                blankrows = [];
+                for i = 1:numel(message)
+                    if numel(message{i}) == 1 && message{i} == ' '
+                        blankrows(i) = 1;
+                    else
+                        blankrows(i) = 0;
+                    end
+                end
+                goodspot = [];
+                for i = 1:numel(blankrows) - 2
+                    if all(blankrows(i:i+2) == 1)
+                        goodspot(end+1) = i+1; %#ok<AGROW>
+                    end
+                end
+                if ~isempty(goodspot)
+                    thespot = goodspot(randperm(numel(goodspot)));
+                    
+                    message{thespot(1),1} = ['This is a test. Please respond to this email with the word ',...
+                                             colors{ceil(rand(1)*numel(colors))}];
+                end
+            end
+            
             message{end+1,1} = ' ';                                                                  %#ok<AGROW>
-            message{end+1,1} = 'Any rats flagged as EXTREME DECLINE must be placed on free water.';  %#ok<AGROW>
+            message{end+1,1} = 'Any rats flagged as EXTREME DECLINE must be flagged as "Sick" using';%#ok<AGROW>
+            message{end+1,1} = 'TechNotes with the note "Significant weight loss" and return to ';   %#ok<AGROW>
+            message{end+1,1} = 'training no sooner than 5 days. Someone should perform a health ';   %#ok<AGROW>
+            message{end+1,1} = 'check as soon as possible. Animals are not to return to water ';     %#ok<AGROW>
+            message{end+1,1} = 'restriction until their weight has increased and stabilized.';       %#ok<AGROW>
             message{end+1,1} = ' ';                                                                  %#ok<AGROW>
             message{end+1,1} = 'Thanks';                                                             %#ok<AGROW>
             message{end+1,1} = 'The Mass Meister';                                                   %#ok<AGROW>
@@ -361,11 +399,11 @@ try
             
             message{end+1} = 'ratter\ExperPort\Utility\AutomatedEmails\checkratweights.m'; %#ok<AGROW>
             
-            if ~isempty(tempdata);
+            if ~isempty(tempdata)
                 f = figure('color','w'); set(gca,'fontsize',18); hold on;
                 c = jet(length(tempdata));
                 name = cell(0);
-                for r = 1:length(tempdata);
+                for r = 1:length(tempdata)
                     plot(0:-1:-max_days+1,tempdata{r}.mass,'-o','markerfacecolor',c(r,:),...
                         'markeredgecolor',c(r,:),'markersize',8,'color',c(r,:),'linewidth',2);
                     if sum(strcmp(AllRecovRats,tempdata{r}.ratname)) > 0
@@ -395,7 +433,7 @@ try
                 else
                     subject = 'Extreme Weight Drop Colony Analysis';
                 end
-            elseif contains_superextreme_decline == 1;
+            elseif contains_superextreme_decline == 1
                 subject = [badrats,' Weight Declining (contains EXTREME decline)'];
             elseif isempty(badrats)
                 subject = 'Rat Mass Follow-Up';
@@ -419,7 +457,7 @@ try
         output = [];
     end
     
-    for i = 1:3;
+    for i = 1:3
         if i == 1;     R = missingovernightmass; T = 'overnight'; 
                        E = Exp(subscribe_alls == 1 | overnightTs == 1 | LMs == 1);
         elseif i == 2; R = missingmorningmass; T = 'morning'; 

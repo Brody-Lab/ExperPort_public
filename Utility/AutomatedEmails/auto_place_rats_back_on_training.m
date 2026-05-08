@@ -54,8 +54,10 @@ for i = 1:numel(Cs)
             end
             newnote(bad == 1) = '';
             
-            mym(bdata,['update ratinfo.schedule set ratname="',rtemp,'", experimenter="',fakeexp,...
-                '", comments="',newnote,'", instructions="Remove from free water" where schedentryid=',num2str(Is(i))]);
+            %mym(bdata,['update ratinfo.schedule set ratname="',rtemp,'", experimenter="',fakeexp,...
+            %    '", comments="',newnote,'", instructions="Remove from free water" where schedentryid=',num2str(Is(i))]);
+            
+            bdata('call ratinfo.return_rat_to_training("{Si}","{Si}","{Si}","{Si}","{S}")',rtemp,fakeexp,newnote,'Remove from free water',Is(i));
         end
     end
 end

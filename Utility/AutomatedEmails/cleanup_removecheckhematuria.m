@@ -21,7 +21,8 @@ try
                 x = strfind(lower(newinstr),'check hematuria');
                 newinstr(x:x+14) = [];
 
-                mym(bdata,['update ratinfo.schedule set instructions="',newinstr,'" where schedentryid=',num2str(sID(i))]);
+                %mym(bdata,['update ratinfo.schedule set instructions="',newinstr,'" where schedentryid=',num2str(sID(i))]);
+                bdata('call ratinfo.update_schedule_instructions("{S}",{Si})',newinstr,sID(i));
             end
         end
     end

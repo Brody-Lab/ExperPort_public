@@ -1,7 +1,7 @@
 function checktrainproblems
 
 try 
-    rigs = bdata(['SELECT DISTINCT rig FROM ratinfo.schedule WHERE date="',datestr(now, 29),'";']);
+    rigs = bdata(['SELECT DISTINCT rig FROM ratinfo.schedule WHERE date="',datestr(now, 29),'"']);
 
     %setpref('Internet','SMTP_Server','brodyfs2.princeton.edu');
     %setpref('Internet','E_mail',['ScheduleMeister',datestr(now,'yymm'),'@Princeton.EDU']);
@@ -16,19 +16,19 @@ try
 
     for slot = 1:6
         for rig = rigs'
-            temp = mym(bdata,['SELECT DISTINCT ratname FROM ratinfo.schedule WHERE rig="',num2str(rig),'" AND timeslot="',num2str(slot),'" AND date="',datestr(now,29),'"']);
+            temp = bdata(['SELECT DISTINCT ratname FROM ratinfo.schedule WHERE rig="',num2str(rig),'" AND timeslot="',num2str(slot),'" AND date="',datestr(now,29),'"']);
             if isempty(temp.ratname); continue; end
             ratname = temp.ratname{1};
             if isempty(ratname); continue; end
             
-            contact = mym(bdata,['SELECT DISTINCT contact FROM ratinfo.rats WHERE ratname="',ratname,'";']);
+            contact = bdata(['SELECT DISTINCT contact FROM ratinfo.rats WHERE ratname="',ratname,'"']);
             contact = parse_emails(contact.contact{1});
             Expname = cell(0);
             for e = 1:length(contact)
-                temp = mym(bdata,['SELECT DISTINCT experimenter FROM ratinfo.contacts WHERE email="',[contact{e},'@princeton.edu'],'";']);
+                temp = bdata(['SELECT DISTINCT experimenter FROM ratinfo.contacts WHERE email="',[contact{e},'@princeton.edu'],'"']);
                 Expname{e} = temp.experimenter{1};
             end
-            temp = mym(bdata,'SELECT DISTINCT experimenter FROM ratinfo.contacts WHERE subscribe_all=1');
+            temp = bdata('SELECT DISTINCT experimenter FROM ratinfo.contacts WHERE subscribe_all=1');
             Expname(end+1:end+length(temp.experimenter)) = temp.experimenter;
             Expname = unique(Expname);
             
@@ -36,7 +36,7 @@ try
                 expname = Expname{e};
                 if ~isfield(output,expname); eval(['output.',expname,' = cell(0);']); end
 
-                temp = mym(bdata,['SELECT DISTINCT starttime FROM sess_started WHERE ratname="',ratname,'" AND sessiondate="',datestr(now,29),'"']);
+                temp = bdata(['SELECT DISTINCT starttime FROM sess_started WHERE ratname="',ratname,'" AND sessiondate="',datestr(now,29),'"']);
                 if isempty(temp.starttime); Ts = ''; else Ts = temp.starttime{1}; end
                 if isempty(Ts)
                     mtemp = [ratname,' was scheduled to run in rig ',num2str(rig),' session ',num2str(slot),' but did not appear to run anywhere.'];
@@ -47,7 +47,7 @@ try
                     continue;
                 end
 
-                temp = mym(bdata,['SELECT DISTINCT Hostname FROM sess_started WHERE ratname="',ratname,'" AND sessiondate="',datestr(now,29),'"']);
+                temp = bdata(['SELECT DISTINCT Hostname FROM sess_started WHERE ratname="',ratname,'" AND sessiondate="',datestr(now,29),'"']);
                 if isempty(temp.Hostname); Rg{1} = 'Rig00'; else Rg = temp.Hostname; end
 
                 RealRg = [];
@@ -65,7 +65,7 @@ try
                     eval(['output.',expname,'{end+1} = mtemp;']);
                 end
 
-                temp = mym(bdata,['SELECT DISTINCT was_ended FROM sess_started WHERE ratname="',ratname,'" AND sessiondate="',datestr(now,29),'"']);
+                temp = bdata(['SELECT DISTINCT was_ended FROM sess_started WHERE ratname="',ratname,'" AND sessiondate="',datestr(now,29),'"']);
                 if isempty(temp.was_ended); was_ended = []; else was_ended = temp.was_ended; end
                 if was_ended == 0
                     mtemp = [ratname,' was started in rig ',num2str(rig),' session ',num2str(slot),' at ',Ts,' but has not ended.']; %#ok<NASGU>
@@ -74,9 +74,9 @@ try
                 elseif isempty(was_ended); continue;
                 end
 
-                temp = mym(bdata,['SELECT DISTINCT Endtime FROM sessions WHERE ratname="',ratname,'" AND sessiondate="',datestr(now,29),'"']);
+                temp = bdata(['SELECT DISTINCT Endtime FROM sessions WHERE ratname="',ratname,'" AND sessiondate="',datestr(now,29),'"']);
                 Te = temp.Endtime;
-                temp = mym(bdata,['SELECT DISTINCT starttime FROM sess_started WHERE ratname="',ratname,'" AND sessiondate="',datestr(now,29),'"']);
+                temp = bdata(['SELECT DISTINCT starttime FROM sess_started WHERE ratname="',ratname,'" AND sessiondate="',datestr(now,29),'"']);
                 Ts = temp.starttime;
                 total_runtime = []; inslot = [];
                 for i = 1:length(Te)
@@ -147,7 +147,7 @@ try
         eval(['test1 = isempty(output.',BadE{E},');']);
         if test1 == 1; continue; end
         
-        x = mym(bdata,['SELECT DISTINCT email FROM ratinfo.contacts WHERE experimenter="',BadE{E},'";']);
+        x = bdata(['SELECT DISTINCT email FROM ratinfo.contacts WHERE experimenter="',BadE{E},'"']);
         email = x.email;
         
         eval(['message = output.',BadE{E},';']);
@@ -167,15 +167,15 @@ try
     
     for S = 1:2
         if S == 1; message = morning;
-            E = mym(bdata,'SELECT DISTINCT email FROM ratinfo.contacts WHERE tech_morning=1');
+            E = bdata('SELECT DISTINCT email FROM ratinfo.contacts WHERE tech_morning=1');
             email = E.email;
-            temp = mym(bdata,'SELECT DISTINCT email FROM ratinfo.contacts WHERE subscribe_all=1');
+            temp = bdata('SELECT DISTINCT email FROM ratinfo.contacts WHERE subscribe_all=1');
             email(end+1:end+length(temp.email)) = temp.email;
             email = unique(email);
         else       message = evening;
-            E = mym(bdata,'SELECT DISTINCT email FROM ratinfo.contacts WHERE tech_afternoon=1');
+            E = bdata('SELECT DISTINCT email FROM ratinfo.contacts WHERE tech_afternoon=1');
             email = E.email;
-            temp = mym(bdata,'SELECT DISTINCT email FROM ratinfo.contacts WHERE subscribe_all=1');
+            temp = bdata('SELECT DISTINCT email FROM ratinfo.contacts WHERE subscribe_all=1');
             email(end+1:end+length(temp.email)) = temp.email;
             email = unique(email);
         end
@@ -200,7 +200,7 @@ try
                 sendmail(email,'Possible Rats Did Not Run',message);
             
                 for e = 1:length(email)
-                    temp = mym(bdata,['SELECT DISTINCT experimenter FROM ratinfo.contacts WHERE email="',email{e},'";']);
+                    temp = bdata(['SELECT DISTINCT experimenter FROM ratinfo.contacts WHERE email="',email{e},'"']);
                     eval(['output.',temp.experimenter{1},' = message;']);
                 end
             else

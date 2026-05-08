@@ -9,7 +9,7 @@ try
         
     AllRats = unique([RatSC;RatR]); AllRats(strcmp(AllRats,'')) = [];
     
-    WL = WM_rat_water_list(1,[],'all',datestr(now,'yyyy-mm-dd'),1);
+    WL = WM_rat_water_list(1,[],'all',datestr(now,'yyyy-mm-dd'),1,2);
     
     for i = 1:length(Emails); emailid{i} = Emails{i}(1:find(Emails{i}=='@',1,'first')-1); end
     

@@ -137,11 +137,13 @@ try
                 end
                 
                 %remove the reserved note
-                mym(bdata,'update ratinfo.schedule set comments="" where schedentryid={S}',It(i));
+                %mym(bdata,'update ratinfo.schedule set comments="" where schedentryid={S}',It(i));
+                bdata('call ratinfo.update_schedule_comments("{S}",{Si})','',It(i));
                 if isempty(Rt{i})
                     %the rig is not running a rat, also remove the
                     %experimenter
-                    mym(bdata,'update ratinfo.schedule set experimenter="" where schedentryid={S}',It(i));
+                    %mym(bdata,'update ratinfo.schedule set experimenter="" where schedentryid={S}',It(i));
+                    bdata('call ratinfo.update_schedule_experimenter("{S}",{Si})','',It(i));
                 end
             end
         end

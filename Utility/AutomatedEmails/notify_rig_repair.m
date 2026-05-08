@@ -17,6 +17,7 @@ try
     %Let's run through the list of rigs and snugs and delete duplicates
     %only keeping the oldest entry
     ur = unique(rigs);
+    brokedate = cell(0);
     for i = 1:numel(ur)
         if sum(rigs == ur(i)) > 1
             dates = rigdate(rigs == ur(i));
@@ -37,6 +38,7 @@ try
     end
     
     us = unique(snugs);
+    brokedate = cell(0);
     for i = 1:numel(us)
         if sum(snugs == us(i)) > 1
             dates = snugdate(snugs == us(i));
@@ -56,7 +58,14 @@ try
         snugbrokefor(i) = ceil(now - datenum(snugdate{i},'yyyy-mm-dd HH:MM:SS'));
     end
            
+    [Srats,Srigs] = bdata(['select ratname, rig from ratinfo.schedule where date="',datestr(now,'yyyy-mm-dd'),'"']);
+    [Rrats,Rcont] = bdata('select ratname, contact from ratinfo.rats where extant=1');
     [Experimenters,Emails,FixRigs] = bdata('select experimenter, email, tech_shifts from ratinfo.contacts where is_alumni=0');
+    
+    contactid = cell(0);
+    for i = 1:numel(Emails)
+        contactid{i} = Emails{i}(1:find(Emails{i}=='@',1,'first')-1);
+    end
     
     repair = cell(0);
     for i = 1:numel(FixRigs)

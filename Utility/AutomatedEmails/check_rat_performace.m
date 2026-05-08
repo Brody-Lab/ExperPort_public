@@ -30,7 +30,7 @@ try
     for i=1:length(et);    ET(i)   = datenum(et{i},'HH:MM:SS'); end 
     DUR = round((ET - ST) * 24 * 60);
 
-    for i=[0:37,100,201:204,210] 
+    for i=[0:38,201:205,210,401:404] 
         eval(['X.rig',num2str(i),'.data=[];']); 
         eval(['X.rig',num2str(i),'.rat={};']);
     end
@@ -103,7 +103,7 @@ try
         end
 
         RG = RIG(xt);
-        if any([0:37,100,201:204,210] == RG)
+        if any([0:38,201:205,210,401:404] == RG)
             eval(['X.rig',num2str(RG),'.data(end+1,:) = [ztn ztd nt dt];']);
             eval(['X.rig',num2str(RG),'.rat{ end+1}   = ratT{i};']);
         end
@@ -114,7 +114,7 @@ try
 
 
     %Let's figure out which rigs are significantly off
-    for i=1:37
+    for i=[1:38,201:205,210,401:404]
         data = eval(['X.rig',num2str(i),'.data;']);
         if isempty(data) || size(data,1)==1; continue; end
 
@@ -161,7 +161,12 @@ try
         elseif zzn >  3; problem = [problem,'Too Many Trials Z=',sprintf('%+4.1f',data.zzn)];
         end
         data.problem = problem;
-
+        
+        %save the z-scores to the schedule for future trend analysis
+        id = bdata(['select schedentryid from ratinfo.schedule where date="',datestr(now,'yyyy-mm-dd'),...
+            '" and rig=',num2str(i),' and timeslot=9']);
+        bdata('call ratinfo.update_rig_bias_n("{S}","{S}","{S}")',zzn,zzd,id);
+        
         temp = strcmp(CalRig,num2str(i));
         if sum(temp) ~= 0
             lastcalib = unique(CalDate(temp));

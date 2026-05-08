@@ -5,10 +5,10 @@ try
     %setpref('Internet','E_mail',['ScheduleMeister',datestr(now,'yymm'),'@Princeton.EDU']);
     set_email_sender
     
-    [r t] = bdata(['select rig, timeslot from ratinfo.schedule where date="',datestr(now+1,'yyyy-mm-dd'),'"']);
+    [r, t] = bdata(['select rig, timeslot from ratinfo.schedule where date="',datestr(now+1,'yyyy-mm-dd'),'"']);
 
     message = cell(0);
-    for rig=[1:15,18:30]
+    for rig=1:24
         for slot=1:9
 
             if sum(r==rig & t==slot) == 0
@@ -21,7 +21,7 @@ try
 
     if ~isempty(message)
         message{end+1} = 'ratter\ExperPort\Utility\AutomatedEmails\check_tomorrow_schedule_exists.m';
-        sendmail({'ckopec@princeton.edu','mpagan@princeton.edu','brody@princeton.edu'},'Problem with Schedule',message);
+        sendmail('ckopec@princeton.edu','Problem with Schedule',message);
     end
     
 catch %#ok<CTCH>

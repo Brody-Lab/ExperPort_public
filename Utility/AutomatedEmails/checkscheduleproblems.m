@@ -2,10 +2,10 @@ function checkscheduleproblems
 
 try 
     try 
-        riglist = mym(bdata,['SELECT DISTINCT rig FROM ratinfo.schedule WHERE date="',datestr(now, 29),'";']);
+        riglist = bdata(['SELECT DISTINCT rig FROM ratinfo.schedule WHERE date="',datestr(now, 29),'"']);
     catch %#ok<CTCH>
         bdata('connect');
-        riglist = mym(bdata,['SELECT DISTINCT rig FROM ratinfo.schedule WHERE date="',datestr(now, 29),'";']);
+        riglist = bdata(['SELECT DISTINCT rig FROM ratinfo.schedule WHERE date="',datestr(now, 29),'"']);
     end
 
     %setpref('Internet','SMTP_Server','brodyfs2.princeton.edu');
@@ -28,46 +28,46 @@ try
     for slot = 1:6
         for rig = rigs'
 
-            temp1 = mym(bdata,['SELECT DISTINCT ratname FROM ratinfo.schedule WHERE timeslot="',num2str(slot),'" AND rig="',num2str(rig),'" AND date="',datestr(now,29),'";']);
+            temp1 = bdata(['SELECT DISTINCT ratname FROM ratinfo.schedule WHERE timeslot="',num2str(slot),'" AND rig="',num2str(rig),'" AND date="',datestr(now,29),'"']);
             if isempty(temp1.ratname); continue; end
             ratname = temp1.ratname{1};
             if isempty(ratname); continue; end
 
-            temp2 = mym(bdata,['SELECT DISTINCT extant FROM ratinfo.rats WHERE ratname="',ratname,'";']);
+            temp2 = bdata(['SELECT DISTINCT extant FROM ratinfo.rats WHERE ratname="',ratname,'"']);
             extant = temp2.extant;
 
             if extant == 0; notextant{end+1} = ratname; end %#ok<AGROW>
 
-            temp3 = mym(bdata,['SELECT DISTINCT forceFreeWater FROM ratinfo.rats WHERE ratname="',ratname,'";']);
+            temp3 = bdata(['SELECT DISTINCT forceFreeWater FROM ratinfo.rats WHERE ratname="',ratname,'"']);
             freewater = temp3.forceFreeWater;
 
             if freewater == 1; freewatertrain{end+1} = ratname; end %#ok<AGROW>
 
-            temp4 = mym(bdata,['SELECT DISTINCT rig FROM ratinfo.schedule WHERE ratname="',ratname,'" AND timeslot="',num2str(slot),'" AND date="',datestr(now,29),'";']);
+            temp4 = bdata(['SELECT DISTINCT rig FROM ratinfo.schedule WHERE ratname="',ratname,'" AND timeslot="',num2str(slot),'" AND date="',datestr(now,29),'"']);
             rigtemp = temp4.rig;
 
             if length(rigtemp) > 1; doublerigsameslot{end+1} = ratname; end %#ok<AGROW>
             
-            temp5 = mym(bdata,['SELECT DISTINCT cagemate FROM ratinfo.rats WHERE ratname="',ratname,'";']);
+            temp5 = bdata(['SELECT DISTINCT cagemate FROM ratinfo.rats WHERE ratname="',ratname,'"']);
             if ~isempty(temp5.cagemate); cagemate = temp5.cagemate{1};
             else                         cagemate = '';
             end
             
-            temp9 = mym(bdata,['SELECT DISTINCT forceDepWater FROM ratinfo.rats WHERE ratname="',ratname,'";']);
+            temp9 = bdata(['SELECT DISTINCT forceDepWater FROM ratinfo.rats WHERE ratname="',ratname,'"']);
             ratwater = temp9.forceDepWater;
             
             if length(cagemate) > 1 
-                temp6 = mym(bdata,['SELECT DISTINCT extant FROM ratinfo.rats WHERE ratname="',cagemate,'";']);
+                temp6 = bdata(['SELECT DISTINCT extant FROM ratinfo.rats WHERE ratname="',cagemate,'"']);
                 extantmate = temp6.extant;
                 
                 if extantmate == 0; notextantcagemate{end+1} = ratname; end %#ok<AGROW>
                 
-                temp7 = mym(bdata,['SELECT DISTINCT cagemate FROM ratinfo.rats WHERE ratname="',cagemate,'";']);
+                temp7 = bdata(['SELECT DISTINCT cagemate FROM ratinfo.rats WHERE ratname="',cagemate,'"']);
                 cagematemate = temp7.cagemate{1};
                 
                 if isempty(cagematemate) || ~strcmp(cagematemate,ratname); unbalancedcagemate{end+1} = ratname; end  %#ok<AGROW>
                 
-                temp8 = mym(bdata,['SELECT DISTINCT timeslot FROM ratinfo.schedule WHERE ratname="',cagemate,'" AND date="',datestr(now,29),'";']);
+                temp8 = bdata(['SELECT DISTINCT timeslot FROM ratinfo.schedule WHERE ratname="',cagemate,'" AND date="',datestr(now,29),'"']);
                 mateslot = temp8.timeslot;
                 
                 if ~isempty(mateslot)
@@ -76,7 +76,7 @@ try
                     end
                 end
                 
-                temp10 = mym(bdata,['SELECT DISTINCT forceDepWater FROM ratinfo.rats WHERE ratname="',cagemate,'";']);
+                temp10 = bdata(['SELECT DISTINCT forceDepWater FROM ratinfo.rats WHERE ratname="',cagemate,'"']);
                 matewater = temp10.forceDepWater;
                 if matewater > ratwater; ratwater = matewater; end
                 
@@ -98,17 +98,17 @@ try
     for i = 1:length(waterislate);        BadRats{end+1} = waterislate{i};        end %#ok<AGROW>
     BadRats = unique(BadRats);
 
-    x = mym(bdata,'SELECT DISTINCT email FROM ratinfo.contacts');
+    x = bdata('SELECT DISTINCT email FROM ratinfo.contacts');
     Exp = x.email;
     
     for e = 1:length(Exp)
-        expname = mym(bdata,['SELECT DISTINCT experimenter FROM ratinfo.contacts WHERE email="',Exp{e},'";']);
+        expname = bdata(['SELECT DISTINCT experimenter FROM ratinfo.contacts WHERE email="',Exp{e},'"']);
         expname = expname.experimenter{1};
         tempemail = Exp{e}(1:find(Exp{e} == '@',1,'first')-1);
         rattemp = cell(0);
         for r = 1:length(BadRats)
-            sqlstr = ['SELECT DISTINCT contact FROM ratinfo.rats WHERE ratname="',BadRats{r},'";'];
-            z = mym(bdata,sqlstr);
+            sqlstr = ['SELECT DISTINCT contact FROM ratinfo.rats WHERE ratname="',BadRats{r},'"'];
+            z = bdata(sqlstr);
             expswap = parse_emails(z.contact{1});
             if sum(strcmp(expswap,tempemail)) > 0
                 rattemp{end+1} = BadRats{r}; %#ok<AGROW>

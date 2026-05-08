@@ -133,6 +133,8 @@ try
         
         message{end+1} = 'ratter\ExperPort\Utility\AutomatedEmails\checknoratsrun.m';
         
+        E = unique([E,EW]);
+        
         for e = 1:length(E)
             temp = strcmp(RR,E{e});
             if sum(temp) == 1
@@ -174,7 +176,11 @@ try
         end
         
         message = remove_duplicate_lines(message);
-        sendmail(email,['No ',capspecies,' Ran Today'],message);    
+        try
+            sendmail(email,['No ',capspecies,' Ran Today'],message); 
+        catch
+            senderror_report;
+        end    
         
         if textalert == 1
             RECIP = EX(logical(LM));
@@ -203,7 +209,11 @@ try
             
             for i = 1:numel(RECIP)
                 if strcmp(RECIP{i},'Carlos'); continue; end
-                send_text_message(['No ',species,' watered sessions ',num2str(waterslots)],[singlespecies,' Water Alert'],RECIP{i}); 
+                try
+                    send_text_message(['No ',species,' watered sessions ',num2str(waterslots)],[singlespecies,' Water Alert'],RECIP{i}); 
+                catch
+                    senderror_report;
+                end
             end
         end
     end

@@ -3,12 +3,12 @@ function checkschedulechange(shift,varargin)
 try 
     if nargin == 0; shift = [1 2]; end
 
-    sqlstr = 'SELECT DISTINCT ratname FROM ratinfo.rats WHERE extant=1 ORDER BY ratname;';
+    sqlstr = 'SELECT DISTINCT ratname FROM ratinfo.rats WHERE extant=1 ORDER BY ratname';
     try 
-        data = mym(bdata, sqlstr);
+        data = bdata(sqlstr);
     catch %#ok<CTCH>
         bdata('connect');
-        data = mym(bdata, sqlstr);
+        data = bdata(sqlstr);
     end
 
     %setpref('Internet','SMTP_Server','brodyfs2.princeton.edu');
@@ -29,11 +29,11 @@ try
 
     for r = 1:length(ratnames)
         ratname = ratnames{r};
-        temp1 = mym(bdata,['SELECT DISTINCT timeslot FROM ratinfo.schedule WHERE ratname="',ratname,'" AND date="',datestr(now-1, 29),'";']);
-        temp2 = mym(bdata,['SELECT DISTINCT timeslot FROM ratinfo.schedule WHERE ratname="',ratname,'" AND date="',datestr(now, 29),'";']);
+        temp1 = bdata(['SELECT DISTINCT timeslot FROM ratinfo.schedule WHERE ratname="',ratname,'" AND date="',datestr(now-1, 29),'"']);
+        temp2 = bdata(['SELECT DISTINCT timeslot FROM ratinfo.schedule WHERE ratname="',ratname,'" AND date="',datestr(now, 29),'"']);
 
-        temp3 = mym(bdata,['SELECT DISTINCT rig FROM ratinfo.schedule WHERE ratname="',ratname,'" AND date="',datestr(now-1, 29),'";']);
-        temp4 = mym(bdata,['SELECT DISTINCT rig FROM ratinfo.schedule WHERE ratname="',ratname,'" AND date="',datestr(now, 29),'";']);
+        temp3 = bdata(['SELECT DISTINCT rig FROM ratinfo.schedule WHERE ratname="',ratname,'" AND date="',datestr(now-1, 29),'"']);
+        temp4 = bdata(['SELECT DISTINCT rig FROM ratinfo.schedule WHERE ratname="',ratname,'" AND date="',datestr(now, 29),'"']);
 
         slot_yesterday = temp1.timeslot; slot_yesterday(slot_yesterday > 6) = [];
         slot_today     = temp2.timeslot; slot_today(    slot_today     > 6) = [];
@@ -140,12 +140,12 @@ try
     for i = shift;
         if i == 1; 
             T = 'morning'; 
-            E = mym(bdata,'SELECT DISTINCT email FROM ratinfo.contacts WHERE tech_morning=1 AND is_alumni=0');
+            E = bdata('SELECT DISTINCT email FROM ratinfo.contacts WHERE tech_morning=1 AND is_alumni=0');
             E = E.email;
             S = [1 2 3 4]; 
         else
             T = 'evening'; 
-            E = mym(bdata,'SELECT DISTINCT email FROM ratinfo.contacts WHERE tech_afternoon=1 AND is_alumni=0');
+            E = bdata('SELECT DISTINCT email FROM ratinfo.contacts WHERE tech_afternoon=1 AND is_alumni=0');
             E = E.email;
             S = [4 5 6];
         end
@@ -180,7 +180,7 @@ try
             for e = 1:length(E)
                 message = remove_duplicate_lines(message);
                 sendmail(E{e},'Training Schedule Changes',message);
-                expname = mym(bdata,['SELECT DISTINCT experimenter FROM ratinfo.contacts WHERE email="',E{e},'";']);
+                expname = bdata(['SELECT DISTINCT experimenter FROM ratinfo.contacts WHERE email="',E{e},'"']);
                 expname = expname.experimenter{1};
                 eval(['output.',expname,' = message;']);
             end
