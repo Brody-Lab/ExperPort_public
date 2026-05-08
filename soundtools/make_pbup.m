@@ -405,6 +405,8 @@ function [snd,lrate,rrate,data] = make_pbup(total_rate, gamma, srate, T, varargi
                 snd = real(ifft(ftemp_snd * vol_scaling));
             end
         else
+            tp1 = round(tp1); % round is only here to prevent weird floating point errors.
+            tp2 = round(tp2); % round is only here to prevent weird floating point errors.
             for i = 1:length(tp1) % place left bups
                 if tp1(i)>w && tp1(i)+w<=size(snd,2)
                     snd(1,tp1(i)-w:tp1(i)+w) = snd(1,tp1(i)-w:tp1(i)+w)+bupl;
