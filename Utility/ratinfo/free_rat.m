@@ -16,11 +16,17 @@ else
        
         try
             if ~isempty(oldid)
-            mym(bdata,'update ratinfo.schedule set ratname="", experimenter="" where schedentryid="{S}"',oldid);
+            %mym(bdata,'update ratinfo.schedule set ratname="", experimenter="" where schedentryid="{S}"',oldid);
+            bdata('call ratinfo.update_schedule_ratname("{S}",{Si})','',oldid);
+            bdata('call ratinfo.update_schedule_experimenter("{S}",{Si})','',oldid);
+            bdata('call ratinfo.update_schedule_comments("{S}",{Si})','',oldid);
+            bdata('call ratinfo.update_schedule_instructions("{S}",{Si})','',oldid);
+            
             fprintf('Rat %s removed from the schedule: Rig %d, Slot %d\n',ratname, rig, slot);
             end
             % Set date sac and extant=0
-            mym(bdata,'update ratinfo.rats set free=1,training=0,contact="begelfer" where internalID="{S}"',ratID);
+            %mym(bdata,'update ratinfo.rats set free=1,training=0,contact="begelfer" where internalID="{S}"',ratID);
+            bdata('call ratinfo.flag_rat_free("{Si}")',ratID);
             
             fprintf('Rat %s set to free\n',ratname);
             S.err=0;

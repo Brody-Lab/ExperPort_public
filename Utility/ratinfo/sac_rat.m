@@ -16,14 +16,23 @@ else
        
         try
             if ~isempty(oldid)
-            mym(bdata,'update ratinfo.schedule set ratname="", experimenter="" where schedentryid="{S}"',oldid);
+            %mym(bdata,'update ratinfo.schedule set ratname="", experimenter="" where schedentryid="{S}"',oldid);
+            bdata('call ratinfo.update_schedule_ratname("{S}",{Si})','',oldid);
+            bdata('call ratinfo.update_schedule_experimenter("{S}",{Si})','',oldid);
+            bdata('call ratinfo.update_schedule_comments("{S}",{Si})','',oldid);
+            bdata('call ratinfo.update_schedule_instructions("{S}",{Si})','',oldid);
             fprintf('Rat %s removed from the schedule: Rig %d, Slot %d\n',ratname, rig, slot);
             end
             % Set date sac and extant=0
-            mym(bdata,'update ratinfo.rats set extant=0,cagemate="", dateSac="{S}" where internalID="{S}"',datestr(now,29),ratID);
+            %mym(bdata,'update ratinfo.rats set extant=0,cagemate="", dateSac="{S}" where internalID="{S}"',datestr(now,29),ratID);
+            bdata('call ratinfo.flag_rat_dead("{S}","{Si}")',datestr(now,'yyyy-mm-dd'),ratID);
+            bdata('call ratinfo.update_cagemate("{S}","{Si}")','',ratID);
             
             % Remove rat from cagemate
-            mym(bdata,'update ratinfo.rats set cagemate="" where cagemate="{S}"',ratname);
+            %mym(bdata,'update ratinfo.rats set cagemate="" where cagemate="{S}"',ratname);
+            cm = bdata(['select cagemate from ratinfo.rats where internalID=',num2str(ratID)]);
+            mateID = bdata(['select internalID from ratinfo.rats where ratname="',cm,'"']);
+            bdata('call ratinfo.update_cagemate("{S}","{Si}")','',mateID);
             
             fprintf('Rat %s removed from the registry\n',ratname);
             S.err=0;

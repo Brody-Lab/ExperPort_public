@@ -24,9 +24,14 @@ end
 
 
 try
-    mym(bdata,'update ratinfo.schedule set ratname="{S}", experimenter="{S}" where schedentryid="{S}"',ratname, oldexp{1}, newid);
-    mym(bdata,'update ratinfo.schedule set ratname="", experimenter="" where schedentryid="{S}"',oldid);
-  
+    %mym(bdata,'update ratinfo.schedule set ratname="{S}", experimenter="{S}" where schedentryid="{S}"',ratname, oldexp{1}, newid);
+    bdata('call ratinfo.update_schedule_ratname("{S}",{Si})',ratname,newid);
+    bdata('call ratinfo.update_schedule_experimenter("{S}",{Si})',oldexp{1},newid);
+            
+    %mym(bdata,'update ratinfo.schedule set ratname="", experimenter="" where schedentryid="{S}"',oldid);
+    bdata('call ratinfo.update_schedule_ratname("{S}",{Si})','',oldid);
+    bdata('call ratinfo.update_schedule_experimenter("{S}",{Si})','',oldid);
+    
     fprintf('Rat %s moved from rig %d, slot %d to rig %d, slot %d\n',ratname, oldrig, oldslot, rig, slot);
     err=0;
 catch
