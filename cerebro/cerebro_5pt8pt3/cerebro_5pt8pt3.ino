@@ -113,7 +113,7 @@ void setup() {
     delay(1);
     //wait;
   }
-  EEPROM.update(CHANNEL_ADDRESS, 5); /*define channel address here 99*/ 
+  EEPROM.update(CHANNEL_ADDRESS, 98); /*define channel address here 99*/ 
   delay(1000);
   //*** Radio ***//
   EEPROM.get(CHANNEL_ADDRESS,channel);
