@@ -49,14 +49,15 @@ try
     ip=char(IA(good_IA).getHostAddress);
     ni=NetworkInterface.getByInetAddress(IA(good_IA));
     if ~isempty(ni)
-    CA=double(ni.getHardwareAddress);
-    hostname=char(IA(good_IA).getHostName);
-    for hx=1:6
-        mac(2*hx-1:2*hx)=dec2hex(mod(CA(hx),2^8),2);
+        CA=double(ni.getHardwareAddress);
+        hostname=char(IA(good_IA).getHostName);
+        if numel(CA) >= 6
+            for hx=1:6
+                mac(2*hx-1:2*hx)=dec2hex(mod(CA(hx),2^8),2);
+            end
+        end
     end
-    end
-    
-    
+
 catch
     showerror;
 end
