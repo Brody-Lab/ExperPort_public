@@ -18,7 +18,7 @@ try
     
     rat_WM_list = WM_rat_water_list(1:10,[],'all',datestr(now,'yyyy-mm-dd'),0,1);
     mouse_WM_list = WM_rat_water_list(1:10,[],'all',datestr(now,'yyyy-mm-dd'),0,0);
-    free_water_list = unique([unique(mouse_WM_list{10});unique(rat_WM_list{10})]);
+    free_water_list = unique([unique(mouse_WM_list{10}(:));unique(rat_WM_list{10}(:))]);
 
     [Exp,email] = bdata('select experimenter, email from ratinfo.contacts where is_alumni=0');
     for i = 1:length(email); econ{i} = email{i}(1:find(email{i} == '@',1,'first')-1); end %#ok<AGROW>

@@ -42,10 +42,16 @@ for i = 1:numel(Enames)
                     if Vnames(k).isdir == 0 && numel(Vnames(k).name) > 4 && strcmp(Vnames(k).name(end-3:end),'.mp4')
                         if sum(strcmp(local_datahash(:,1),Vnames(k).name)) == 0
                             disp(Vnames(k).name);
-                            [hash,mssg] = DataHash(Vnames(k).name);
-                            local_datahash{end+1,1} = Vnames(k).name;
-                            local_datahash{end,2}   = hash;
-                            save(local_datahash_file,'local_datahash')
+                            try
+                                %occasionally this breaks because the video is being read by another function at the
+                                %time, if so let's move on and we'll come to it again in the next loop through
+                                [hash,mssg] = DataHash(Vnames(k).name);
+                                local_datahash{end+1,1} = Vnames(k).name;
+                                local_datahash{end,2}   = hash;
+                                save(local_datahash_file,'local_datahash')
+                            catch
+                                disp('ERROR calculating hash')
+                            end
                         end
                         
                         filepos = find(strcmp(local_datahash(:,1),Vnames(k).name) == 1,1,'first');
